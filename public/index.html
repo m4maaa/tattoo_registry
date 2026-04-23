@@ -77,7 +77,7 @@
       </div>
       <div>
         <div class="section-title">เชื่อมต่อเซิร์ฟเวอร์กลาง</div>
-        <input id="serverUrlInput" placeholder="เช่น https://192.168.1.249:3000" />
+        <input id="serverUrlInput" placeholder="เช่น https://tattoo-registry.onrender.com" />
         <button id="connectServerBtn" class="btn-soft" style="margin-top:8px">เชื่อมต่อ</button>
         <div class="muted-box" style="margin-top:8px"><div><b>สถานะ:</b> <span id="serverStatusText">ยังไม่เชื่อมต่อ</span></div></div>
       </div>
@@ -163,7 +163,8 @@
   <script>
   (() => {
     const STORAGE_KEY='tattoo_registry_final_v1';
-    const state={personnel:[],selectedId:null,currentAngle:'front',stream:null,poseLandmarker:null,poseReady:false,autoCapture:false,autoHoldStart:null,lastAutoShotAt:0,lastPoseInfo:null,socket:null,serverConnected:false,suppressBroadcast:false,bypassIncompleteWarningOnce:false};
+    const SERVER_URL_KEY='tattoo_registry_server_url_v1';
+    const state={personnel:[],selectedId:null,currentAngle:'front',stream:null,poseLandmarker:null,poseReady:false,autoCapture:false,autoHoldStart:null,lastAutoShotAt:0,lastPoseInfo:null,socket:null,serverConnected:false,suppressBroadcast:false,bypassIncompleteWarningOnce:false,currentServerUrl:'',serverSnapshotLoaded:false};
     const angleMeta={front:'ด้านหน้า',back:'ด้านหลัง',left:'ด้านข้างซ้าย',right:'ด้านข้างขวา'};
     const $=id=>document.getElementById(id);
     const els={excelFile:$('excelFile'),importIconBtn:$('importIconBtn'),printFormBtn:$('printFormBtn'),exportBtn:$('exportBtn'),manualId:$('manualId'),manualRank:$('manualRank'),manualFirstName:$('manualFirstName'),manualLastName:$('manualLastName'),manualOperatingUnit:$('manualOperatingUnit'),addManualBtn:$('addManualBtn'),serverUrlInput:$('serverUrlInput'),connectServerBtn:$('connectServerBtn'),serverStatusText:$('serverStatusText'),resetAllBtn:$('resetAllBtn'),selectedPersonName:$('selectedPersonName'),selectedPersonMeta:$('selectedPersonMeta'),statTotal:$('statTotal'),statComplete:$('statComplete'),statPartial:$('statPartial'),statPending:$('statPending'),cameraStatus:$('cameraStatus'),currentAngleLabel:$('currentAngleLabel'),poseHint:$('poseHint'),video:$('video'),captureCanvas:$('captureCanvas'),overlayCanvas:$('overlayCanvas'),toggleCameraBtn:$('toggleCameraBtn'),captureBtn:$('captureBtn'),retakeBtn:$('retakeBtn'),angleSelect:$('angleSelect'),personList:$('personList'),listSearchInput:$('listSearchInput'),filterOperatingUnit:$('filterOperatingUnit'),filterStatus:$('filterStatus'),toast:$('toast'),imgs:{front:$('img-front'),back:$('img-back'),left:$('img-left'),right:$('img-right')},placeholders:{front:$('ph-front'),back:$('ph-back'),left:$('ph-left'),right:$('ph-right')}};
@@ -177,6 +178,68 @@
     const qualityText=q=>q==='ok'?'ผ่าน':q==='warn'?'ควรถ่ายใหม่':'ยังไม่ถ่าย';
     const getSelectedPerson=()=>state.personnel.find(p=>p.localId===state.selectedId)||null;
     const escapeHtml=str=>String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+    function savePreferredServerUrl(url){try{localStorage.setItem(SERVER_URL_KEY,url||'')}catch(_){ }}
+    function loadPreferredServerUrl(){try{return localStorage.getItem(SERVER_URL_KEY)||''}catch(_){return''}}
+    function normalizeUrl(url){return String(url||'').trim().replace(/\/$/,'')}
+    function isLikelyHostedApp(){return location.protocol.startsWith('http') && !['localhost','127.0.0.1'].includes(location.hostname) && !location.port}
+    function countPhotos(person){return ['front','back','left','right'].filter(k=>!!person?.photos?.[k]?.dataUrl).length}
+    function countTotalPhotos(personnel){return (personnel||[]).reduce((sum,p)=>sum+countPhotos(p),0)}
+    function mergePhotoRecord(localPhoto,remotePhoto){
+      if(!localPhoto && !remotePhoto) return null;
+      if(!localPhoto) return remotePhoto;
+      if(!remotePhoto) return localPhoto;
+      const localTime=Date.parse(localPhoto.capturedAt||0)||0;
+      const remoteTime=Date.parse(remotePhoto.capturedAt||0)||0;
+      if(remoteTime>localTime) return remotePhoto;
+      if(localTime>remoteTime) return localPhoto;
+      if((remotePhoto.quality||'')==='ok' && (localPhoto.quality||'')!=='ok') return remotePhoto;
+      return localPhoto;
+    }
+    function mergePersonnelSets(localPersonnel=[],remotePersonnel=[]){
+      const merged=new Map();
+      const upsert=(person,source)=>{
+        if(!person) return;
+        const key=person.id || person.localId || uid();
+        const existing=merged.get(key);
+        const base={localId:person.localId||uid(),id:person.id||'',rank:person.rank||'',firstName:person.firstName||'',lastName:person.lastName||'',operatingUnit:person.operatingUnit||'',position:person.position||'',note:person.note||'',photos:{front:null,back:null,left:null,right:null},createdAt:person.createdAt||new Date().toISOString()};
+        if(!existing){
+          merged.set(key,{...base,photos:{front:person.photos?.front||null,back:person.photos?.back||null,left:person.photos?.left||null,right:person.photos?.right||null}});
+          return;
+        }
+        const createdAt=[existing.createdAt,person.createdAt].filter(Boolean).sort()[0]||existing.createdAt||person.createdAt||new Date().toISOString();
+        merged.set(key,{
+          ...existing,
+          id: existing.id || person.id || '',
+          rank: source==='remote' ? (person.rank || existing.rank || '') : (existing.rank || person.rank || ''),
+          firstName: source==='remote' ? (person.firstName || existing.firstName || '') : (existing.firstName || person.firstName || ''),
+          lastName: source==='remote' ? (person.lastName || existing.lastName || '') : (existing.lastName || person.lastName || ''),
+          operatingUnit: source==='remote' ? (person.operatingUnit || existing.operatingUnit || '') : (existing.operatingUnit || person.operatingUnit || ''),
+          position: source==='remote' ? (person.position || existing.position || '') : (existing.position || person.position || ''),
+          note: source==='remote' ? (person.note || existing.note || '') : (existing.note || person.note || ''),
+          createdAt,
+          photos:{
+            front:mergePhotoRecord(existing.photos?.front,person.photos?.front),
+            back:mergePhotoRecord(existing.photos?.back,person.photos?.back),
+            left:mergePhotoRecord(existing.photos?.left,person.photos?.left),
+            right:mergePhotoRecord(existing.photos?.right,person.photos?.right)
+          }
+        });
+      };
+      localPersonnel.forEach(p=>upsert(p,'local'));
+      remotePersonnel.forEach(p=>upsert(p,'remote'));
+      return [...merged.values()];
+    }
+    function applyIncomingState(payload,{merge=false}={}){
+      if(!payload||!Array.isArray(payload.personnel)) return;
+      const nextPersonnel=merge?mergePersonnelSets(state.personnel,payload.personnel):payload.personnel;
+      state.suppressBroadcast=true;
+      state.personnel=nextPersonnel;
+      const validSelected=nextPersonnel.some(p=>p.localId===payload.selectedId);
+      state.selectedId=validSelected?payload.selectedId:(nextPersonnel[0]?.localId||state.selectedId||null);
+      renderAll();
+      state.suppressBroadcast=false;
+    }
     function dataURLToBlob(dataURL){const arr=dataURL.split(',');const mime=arr[0].match(/:(.*?);/)[1];const bstr=atob(arr[1]);let n=bstr.length;const u8arr=new Uint8Array(n);while(n--)u8arr[n]=bstr.charCodeAt(n);return new Blob([u8arr],{type:mime})}
     function parseNameFields(row){const first=String(row['ชื่อ']??row['name']??'').trim();const last=String(row['นามสกุล']??row['lastname']??row['surname']??'').trim();const combined=String(row['ชื่อ-สกุล']??row['full name']??'').trim();if(first||last)return{firstName:first,lastName:last};if(combined){const parts=combined.split(/\s+/);return{firstName:parts.shift()||'',lastName:parts.join(' ')||''}}return{firstName:'',lastName:''}}
     function normalizeRecord(row){const map={};Object.keys(row).forEach(k=>map[String(k).trim().toLowerCase()]=row[k]);const id=String(map['หมายเลขประจำตัว10หลัก']??map['หมายเลขประจำตัว 10 หลัก']??map['เลขประจำตัว10หลัก']??map['เลขประจำตัว 10 หลัก']??map['เลขประจำตัว']??map['id']??'').replace(/\D/g,'').slice(0,10);const rank=String(map['ยศ']??map['rank']??'').trim();const nameFields=parseNameFields({'ชื่อ':map['ชื่อ'],'นามสกุล':map['นามสกุล'],'ชื่อ-สกุล':map['ชื่อ-สกุล']??map['ชื่อสกุล']});const operatingUnit=String(map['สังกัดปฏิบัติงาน']??map['operating unit']??map['unit']??map['ส่วนงาน']??map['ฝ่าย']??map['ฝ่าย/แผนก']??'').trim();const position=String(map['ตำแหน่ง']??map['position']??'').trim();if(!id&&!nameFields.firstName&&!nameFields.lastName)return null;return{localId:uid(),id,rank,firstName:nameFields.firstName,lastName:nameFields.lastName,operatingUnit,position,note:'',photos:{front:null,back:null,left:null,right:null},createdAt:new Date().toISOString()}}
@@ -204,8 +267,8 @@
     function resetAllData(){if(!confirm('ลบข้อมูลทั้งหมดและเริ่มใหม่?'))return;state.personnel=[];state.selectedId=null;localStorage.removeItem(STORAGE_KEY);if(state.socket&&state.serverConnected){state.socket.emit('replaceState',{personnel:[],selectedId:null,reason:'reset-all',updatedAt:new Date().toISOString()})}renderAll();showToast('รีเซ็ตข้อมูลแล้ว','warn')}
     function addManual(){const id=els.manualId.value.replace(/\D/g,'').slice(0,10),rank=els.manualRank.value.trim(),firstName=els.manualFirstName.value.trim(),lastName=els.manualLastName.value.trim(),operatingUnit=els.manualOperatingUnit.value.trim();if(!id||id.length!==10)return alert('กรุณากรอกหมายเลขประจำตัว 10 หลัก');if(!firstName||!lastName)return alert('กรุณากรอกชื่อและนามสกุล');if(state.personnel.some(p=>p.id===id))return alert('หมายเลขประจำตัวนี้มีอยู่แล้ว');const person={localId:uid(),id,rank,firstName,lastName,operatingUnit,position:'',note:'',photos:{front:null,back:null,left:null,right:null},createdAt:new Date().toISOString()};state.personnel.unshift(person);state.selectedId=person.localId;els.manualId.value='';els.manualFirstName.value='';els.manualLastName.value='';els.manualOperatingUnit.value='';renderAll();broadcastState('add-manual');showToast('เพิ่มกำลังพลสำเร็จ','ok')}
     async function exportAll(){if(!state.personnel.length)return alert('ยังไม่มีข้อมูลสำหรับส่งออก');const zip=new JSZip();const imgFolder=zip.folder('images');const rows=[];for(const p of state.personnel){const s=statusOf(p);rows.push({'หมายเลขประจำตัว10หลัก':p.id,'ยศ':p.rank,'ชื่อ':p.firstName,'นามสกุล':p.lastName,'สังกัดปฏิบัติงาน':p.operatingUnit,'ตำแหน่ง':p.position||'','สถานะ':statusText(s),'คุณภาพด้านหน้า':qualityText(p.photos.front?.quality||'empty'),'คุณภาพด้านหลัง':qualityText(p.photos.back?.quality||'empty'),'คุณภาพด้านข้างซ้าย':qualityText(p.photos.left?.quality||'empty'),'คุณภาพด้านข้างขวา':qualityText(p.photos.right?.quality||'empty'),'ด้านหน้า':p.photos.front?`images/${p.id}_front.jpg`:'','ด้านหลัง':p.photos.back?`images/${p.id}_back.jpg`:'','ด้านข้างซ้าย':p.photos.left?`images/${p.id}_left.jpg`:'','ด้านข้างขวา':p.photos.right?`images/${p.id}_right.jpg`:''});for(const angle of ['front','back','left','right']){if(p.photos[angle]?.dataUrl){imgFolder.file(`${p.id}_${angle}.jpg`,dataURLToBlob(p.photos[angle].dataUrl))}}}const wb=XLSX.utils.book_new();const ws=XLSX.utils.json_to_sheet(rows);XLSX.utils.book_append_sheet(wb,ws,'รายงาน');const wbArray=XLSX.write(wb,{bookType:'xlsx',type:'array'});zip.file('report.xlsx',wbArray);const content=await zip.generateAsync({type:'blob'});saveAs(content,`tattoo_registry_export_${new Date().toISOString().slice(0,10)}.zip`);showToast('ส่งออก ZIP สำเร็จ','ok')}
-    function printCurrentForm(){const p=getSelectedPerson();if(!p)return alert('กรุณาเลือกกำลังพลก่อนพิมพ์');const now=new Date();const thaiMonths=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];const monthYear=`${thaiMonths[now.getMonth()]} ${(now.getFullYear()+543).toString().slice(-2)}`;const photoCell=angle=>{const photo=p.photos[angle];return `<div class="cell">${photo?.dataUrl?`<img src="${photo.dataUrl}" />`:''}</div>`};const win=window.open('','_blank');win.document.write(`<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><title>แบบฟอร์มบันทึกภาพการตรวจสอบการสักลาย</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet"><style>body{font-family:'Sarabun',Arial,sans-serif;margin:0;color:#111;background:#fff}.page{width:210mm;min-height:297mm;padding:8mm;box-sizing:border-box}.title{text-align:center;font-size:15px;line-height:1.35;margin-top:1mm}.unit{text-align:center;font-size:15px;line-height:1.35;margin-bottom:4mm}.grid{display:grid;grid-template-columns:1fr 1fr;gap:6mm}.cell{aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fff}.cell img{width:100%;height:100%;object-fit:cover}.bottom{margin-top:4mm;text-align:center}.check{font-size:14px;line-height:1.5;position:relative;left:0mm}.sign{font-size:14px;line-height:1.6;position:relative;left:6mm}.namegroup{display:inline-block;position:relative;left:24mm;text-align:left}.name{font-size:14px;line-height:1.7}.position{font-size:14px;line-height:1.7;text-align:center}.date{font-size:14px;line-height:1.7;text-align:center;position:relative;left:6mm}@page{size:A4;margin:6mm}</style></head><body><div class="page"><div class="title">บันทึกภาพการตรวจสอบการสักลายตามร่างกายบริเวณนอกร่มผ้า</div><div class="unit">สังกัด ${escapeHtml(p.operatingUnit||'')}</div><div class="grid">${photoCell('front')}${photoCell('back')}${photoCell('left')}${photoCell('right')}</div><div class="bottom"><div class="check">ตรวจถูกต้อง</div><div class="sign">${escapeHtml(p.rank||'')}</div><div class="namegroup"><div class="name">(${escapeHtml(`${p.firstName||''}  ${p.lastName||''}`.trim())})</div><div class="position">${escapeHtml(p.position||'')}</div><div class="date">${monthYear}</div></div></div></div><script>window.onload=()=>window.print();<\/script></body></html>`);win.document.close()}
-    function connectServer(url){const target=(url||'').trim()||location.origin;if(!/^https?:\/\//.test(target))return alert('กรุณาใส่ URL ให้ครบ เช่น https://192.168.1.249:3000');const ensure=()=>{const socket=window.io(target,{transports:['websocket','polling']});state.socket=socket;els.serverStatusText.textContent='กำลังเชื่อมต่อ...';socket.on('connect',()=>{state.serverConnected=true;els.serverStatusText.textContent=`เชื่อมต่อแล้ว: ${target}`;socket.emit('requestState');showToast('เชื่อมต่อเซิร์ฟเวอร์สำเร็จ','ok')});socket.on('disconnect',()=>{state.serverConnected=false;els.serverStatusText.textContent='ขาดการเชื่อมต่อ';showToast('ขาดการเชื่อมต่อเซิร์ฟเวอร์','warn')});socket.on('stateSnapshot',payload=>{if(!payload||!Array.isArray(payload.personnel))return;state.suppressBroadcast=true;state.personnel=payload.personnel;state.selectedId=payload.selectedId||payload.personnel[0]?.localId||state.selectedId;renderAll();state.suppressBroadcast=false});socket.on('stateUpdated',payload=>{if(!payload||!Array.isArray(payload.personnel))return;state.suppressBroadcast=true;state.personnel=payload.personnel;state.selectedId=payload.selectedId||state.selectedId;renderAll();state.suppressBroadcast=false})};if(window.io)return ensure();const s=document.createElement('script');s.src=`${target.replace(/\/$/,'')}/socket.io/socket.io.js`;s.onload=ensure;s.onerror=()=>alert('โหลด Socket.IO จากเซิร์ฟเวอร์ไม่สำเร็จ');document.head.appendChild(s)}
+    async function printCurrentForm(){const p=getSelectedPerson();if(!p)return alert('กรุณาเลือกกำลังพลก่อนพิมพ์');const now=new Date();const thaiMonths=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];const dateText=`${now.getDate()} ${thaiMonths[now.getMonth()]} ${now.getFullYear()+543}`;const photoCell=angle=>{const photo=p.photos[angle];return `<div class=\"photo-card\"><div class=\"photo-frame\">${photo?.dataUrl?`<img src=\"${photo.dataUrl}\" alt=\"${angleMeta[angle]}\" />`:`<div class=\"photo-placeholder\">${angleMeta[angle]}</div>`}</div><div class=\"photo-label\">${angleMeta[angle]}</div></div>`};const win=window.open('','_blank');if(!win)return alert('เบราว์เซอร์บล็อกหน้าต่างพิมพ์ กรุณาอนุญาต popup ก่อน');win.document.write(`<!DOCTYPE html><html lang=\"th\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>แบบฟอร์มบันทึกภาพการตรวจสอบการสักลาย</title><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap\" rel=\"stylesheet\"><style>@page{size:A4 portrait;margin:8mm}html,body{margin:0;padding:0;background:#fff;color:#111;font-family:'Sarabun',Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}.page{width:194mm;min-height:281mm;padding:0;box-sizing:border-box}.title{text-align:center;font-size:16pt;font-weight:700;line-height:1.35;margin:0 0 2mm}.subtitle{text-align:center;font-size:13pt;line-height:1.35;margin:0 0 4mm}.meta{display:grid;grid-template-columns:28mm 1fr;gap:1.8mm 3mm;font-size:11.5pt;margin-bottom:5mm}.meta .label{font-weight:600}.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:5mm 6mm}.photo-card{display:flex;flex-direction:column;align-items:center}.photo-frame{width:88mm;height:118mm;border:0.35mm solid #111;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fff}.photo-frame img{width:100%;height:100%;object-fit:cover}.photo-placeholder{font-size:11pt;color:#777}.photo-label{margin-top:1.5mm;font-size:11pt;font-weight:600}.footer{margin-top:7mm;font-size:11.5pt;line-height:1.7}.signature-block{margin-top:10mm;text-align:center}.signature-line{margin-top:12mm}.signature-name{margin-top:2mm}.signature-position{margin-top:1mm}.signature-date{margin-top:3mm}</style></head><body><div class=\"page\"><div class=\"title\">บันทึกภาพการตรวจสอบการสักลายตามร่างกายบริเวณนอกร่มผ้า</div><div class=\"subtitle\">ระบบถ่ายภาพกำลังพล ทบ.</div><div class=\"meta\"><div class=\"label\">หมายเลขประจำตัว</div><div>${escapeHtml(p.id||'-')}</div><div class=\"label\">ชื่อ - สกุล</div><div>${escapeHtml(fullName(p)||'-')}</div><div class=\"label\">สังกัด</div><div>${escapeHtml(p.operatingUnit||'-')}</div><div class=\"label\">ตำแหน่ง</div><div>${escapeHtml(p.position||'-')}</div></div><div class=\"photo-grid\">${photoCell('front')}${photoCell('back')}${photoCell('left')}${photoCell('right')}</div><div class=\"footer\">หมายเหตุ: ภาพถ่ายใช้เพื่อบันทึกการตรวจสอบการสักลายตามร่างกายบริเวณนอกร่มผ้า</div><div class=\"signature-block\"><div>ตรวจถูกต้อง</div><div class=\"signature-line\">...............................................................</div><div class=\"signature-name\">(${escapeHtml(fullName(p)||'-')})</div><div class=\"signature-position\">${escapeHtml(p.position||'')}</div><div class=\"signature-date\">${dateText}</div></div></div><script>window.addEventListener('load',async()=>{try{if(document.fonts&&document.fonts.ready){await document.fonts.ready}}catch(e){}window.print()});<\/script></body></html>`);win.document.close()}
+    function connectServer(url,{silent=false}={}){const preferred=loadPreferredServerUrl();const target=normalizeUrl((url||'').trim()||preferred||location.origin);if(!/^https?:\/\//.test(target))return alert('กรุณาใส่ URL ให้ครบ เช่น https://tattoo-registry.onrender.com');if(state.socket){state.socket.removeAllListeners();state.socket.disconnect();state.socket=null;state.serverConnected=false}savePreferredServerUrl(target);state.currentServerUrl=target;if(els.serverUrlInput)els.serverUrlInput.value=target;const ensure=()=>{const socket=window.io(target,{transports:['websocket','polling'],reconnection:true,reconnectionAttempts:Infinity,reconnectionDelay:1000});state.socket=socket;els.serverStatusText.textContent='กำลังเชื่อมต่อ...';socket.on('connect',()=>{state.serverConnected=true;state.serverSnapshotLoaded=false;els.serverStatusText.textContent=`เชื่อมต่อแล้ว: ${target}`;socket.emit('requestState');if(!silent)showToast('เชื่อมต่อเซิร์ฟเวอร์สำเร็จ','ok')});socket.on('connect_error',err=>{state.serverConnected=false;els.serverStatusText.textContent='เชื่อมต่อไม่สำเร็จ';console.error('socket connect_error',err)});socket.on('disconnect',()=>{state.serverConnected=false;els.serverStatusText.textContent='ขาดการเชื่อมต่อ';showToast('ขาดการเชื่อมต่อเซิร์ฟเวอร์','warn')});socket.on('stateSnapshot',payload=>{if(!payload||!Array.isArray(payload.personnel))return;state.serverSnapshotLoaded=true;const remoteCount=(payload.personnel||[]).length;const localCount=state.personnel.length;const remotePhotos=countTotalPhotos(payload.personnel);const localPhotos=countTotalPhotos(state.personnel);if(remoteCount===0&&localCount>0){broadcastState('seed-server-from-local');showToast('ส่งข้อมูลจากเครื่องนี้ขึ้นเซิร์ฟเวอร์แล้ว','ok');return}if(remoteCount>0&&localCount===0){applyIncomingState(payload,{merge:false});showToast('โหลดข้อมูลจากเซิร์ฟเวอร์แล้ว','ok');return}if(remoteCount>0&&localCount>0){const shouldMerge=remoteCount!==localCount||remotePhotos!==localPhotos;applyIncomingState(payload,{merge:shouldMerge});if(shouldMerge){broadcastState('merge-local-and-server');showToast('รวมข้อมูลเครื่องนี้กับเซิร์ฟเวอร์แล้ว','ok')}}});socket.on('stateUpdated',payload=>{if(!payload||!Array.isArray(payload.personnel))return;applyIncomingState(payload,{merge:false})})};if(window.io)return ensure();const s=document.createElement('script');s.src=`${target.replace(/\/$/,'')}/socket.io/socket.io.js`;s.onload=ensure;s.onerror=()=>alert('โหลด Socket.IO จากเซิร์ฟเวอร์ไม่สำเร็จ');document.head.appendChild(s)}
     function broadcastState(reason='update'){saveLocal();if(state.socket&&state.serverConnected&&!state.suppressBroadcast){state.socket.emit('replaceState',{personnel:state.personnel,selectedId:state.selectedId,reason,updatedAt:new Date().toISOString()})}}
     if (els.excelFile) {
   els.excelFile.addEventListener('change', e => {
@@ -236,20 +299,10 @@ document.querySelectorAll('.angle-card').forEach(card => {
 window.addEventListener('resize', resizeOverlay);
 window.addEventListener('mediapipe-ready', setupPoseIfPossible);
 
-function autoConnectIfHosted() {
-  if (location.protocol.startsWith('http') && location.hostname && location.port === '3000') {
-    if (els.serverUrlInput) els.serverUrlInput.value = location.origin;
-    connectServer(location.origin);
-  }
-}
-
-if (!loadLocal()) {
-  state.personnel = [];
-  state.selectedId = null;
-}
-
-renderAll();
-autoConnectIfHosted();
+function autoConnectIfHosted(){const savedUrl=normalizeUrl(loadPreferredServerUrl());const currentOrigin=normalizeUrl(location.origin);if(savedUrl&&els.serverUrlInput)els.serverUrlInput.value=savedUrl;if(isLikelyHostedApp()){if(els.serverUrlInput)els.serverUrlInput.value=currentOrigin;connectServer(currentOrigin,{silent:true});return}if(savedUrl){connectServer(savedUrl,{silent:true})}}
+    if(!loadLocal()){state.personnel=[];state.selectedId=null}
+    renderAll();
+    autoConnectIfHosted();
   })();
   </script>
 </body>
