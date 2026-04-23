@@ -6,8 +6,8 @@ const { Server } = require('socket.io');
 
 const PORT = process.env.PORT || 3000;
 const HOST = '0.0.0.0';
-const CERT_PATH = process.env.CERT_PATH || 'C:/Users/thx_l/OneDrive/VSC/tattoo_registry_server/192.168.1.93.pem';
-const KEY_PATH = process.env.KEY_PATH || 'C:/Users/thx_l/OneDrive/VSC/tattoo_registry_server/192.168.1.93-key.pem';
+const CERT_PATH = process.env.CERT_PATH || 'D:/VSC/tattoo_registry_server/192.168.1.93.pem';
+const KEY_PATH = process.env.KEY_PATH || 'D:/VSC/tattoo_registry_server/192.168.1.93-key.pem';
 
 const app = express();
 const options = {
@@ -55,6 +55,7 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`HTTPS server running at https://localhost:${PORT}`);
-  console.log(`Check from phone at your LAN IP, example: https://192.168.x.x:${PORT}`);
+  console.log(`HTTPS server running on 0.0.0.0:${PORT}`);
+  console.log(`Open on this PC: https://localhost:${PORT}`);
+  console.log(`Open on phone: https://192.168.1.93:${PORT}`);
 });
