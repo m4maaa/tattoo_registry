@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ระบบถ่ายภาพกำลังพล ทบ. - Final</title>
+  <title>ระบบถ่ายภาพกำลังพล ทบ.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -16,80 +16,43 @@
     window.dispatchEvent(new Event('mediapipe-ready'));
   </script>
   <style>
-    :root{
-      --bg:#f5f7fa; --panel:#ffffff; --line:#d9e0e8; --text:#14213d; --muted:#667085;
-      --primary:#2e5fae; --primary-2:#3b73cc; --ok:#13804a; --warn:#b7791f; --danger:#c23b3b;
-      --soft:#f8fafc; --shadow:0 10px 28px rgba(15,23,42,.06); --radius:18px;
-    }
+    :root{--bg:#f5f7fa;--panel:#fff;--line:#d9e0e8;--text:#14213d;--muted:#667085;--primary:#2e5fae;--primary-2:#3b73cc;--ok:#13804a;--warn:#b7791f;--danger:#c23b3b;--soft:#f8fafc;--shadow:0 10px 28px rgba(15,23,42,.06);--radius:18px}
     *{box-sizing:border-box} html,body{height:100%}
-    body{margin:0;font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text)}
-    button,input,select,textarea{font-family:inherit}
-    .app{display:grid;grid-template-columns:320px 1fr;gap:14px;min-height:100vh;padding:14px}
+    body{margin:0;font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text)} button,input,select{font-family:inherit}
+    .app{display:grid;grid-template-columns:300px 1fr;gap:14px;min-height:100vh;padding:14px}
     .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
     .sidebar{padding:14px;display:flex;flex-direction:column;gap:14px}
-    h1,h2,h3,p{margin:0} h1{font-size:21px;line-height:1.2} h2{font-size:20px;line-height:1.2}
-    .sub{font-size:13px;color:var(--muted)} .tiny{font-size:12px;color:var(--muted)} .section-title{font-size:15px;font-weight:600;margin-bottom:8px}
-    input,select,button,textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px;background:#fff}
-    input:focus,select:focus,button:focus,textarea:focus{outline:2px solid rgba(59,115,204,.18);border-color:var(--primary-2)}
-    button{cursor:pointer;transition:.15s ease;font-weight:500} button:hover{transform:translateY(-1px)}
-    .btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-2)}
-    .btn-soft{background:#f8fbff}.btn-danger{background:#fff6f6;color:var(--danger);border-color:#efc9c9}
-    .btn-ok{background:#eef9f2;border-color:#cae8d5;color:#0f7140}.btn-warn{background:#fff9ee;border-color:#edd59a;color:#996500}
-    .main{display:grid;grid-template-rows:auto auto 1fr auto;gap:14px;min-height:0}
-    .header{padding:14px 16px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
-    .stats{display:flex;gap:10px;flex-wrap:wrap}.stat{padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:var(--soft);min-width:105px}.stat .n{font-size:22px;font-weight:600}
-    .content{display:grid;grid-template-columns:1.52fr .72fr;gap:14px;min-height:0}
-    .camera-panel,.list-panel,.bottom-panel{padding:14px}
-    .icon-actions{display:flex;gap:10px;flex-wrap:wrap}
-    .icon-btn{width:82px;height:82px;padding:0;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:#f8fbff}
-    .icon{font-size:27px;line-height:1}.icon-label{font-size:11px;text-align:center;line-height:1.15}
-    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .camera-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-    .badge{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:13px}
-    .camera-stage-wrap{display:grid;grid-template-columns:minmax(320px,470px) 122px;gap:12px;align-items:start}
-    .camera-wrap{position:relative;aspect-ratio:3/4;max-width:470px;width:100%;border-radius:18px;overflow:hidden;background:#07111d}
-    video{width:100%;height:100%;object-fit:cover;display:block}.overlay{position:absolute;inset:0;pointer-events:none}
-    .guide-box{position:absolute;left:18%;top:8%;width:64%;height:82%;border:3px solid rgba(255,255,255,.92);border-radius:24px;box-shadow:0 0 0 9999px rgba(0,0,0,.16)}
-    .guide-line{position:absolute;left:50%;top:8%;height:82%;border-left:2px dashed rgba(255,255,255,.55);transform:translateX(-50%)}
-    .guide-shoulder,.guide-hip{position:absolute;left:28%;width:44%;border-top:2px dashed rgba(255,255,255,.5)} .guide-shoulder{top:29%}.guide-hip{top:52%}
-    .angle-indicator{position:absolute;left:12px;top:12px;background:rgba(17,24,39,.78);color:#fff;padding:8px 11px;border-radius:12px;font-size:14px;font-weight:600;z-index:5}
-    .camera-side{display:flex;flex-direction:column;gap:10px}.camera-side button{min-height:44px}
-    .preview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
-    .angle-card{border:2px solid #d4dae2;border-radius:16px;background:#fcfdff;overflow:hidden;cursor:pointer;transition:.14s ease}
-    .angle-card.active{border-color:var(--primary);box-shadow:0 0 0 3px rgba(46,95,174,.11)}
-    .angle-card[data-quality="ok"]{border-color:var(--ok)} .angle-card[data-quality="warn"]{border-color:var(--warn)} .angle-card[data-quality="empty"]{border-color:#c8d0da}
-    .angle-thumb{aspect-ratio:3/4;background:linear-gradient(180deg,#edf2f7,#dfe6ee);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
-    .angle-thumb img{width:100%;height:100%;object-fit:cover;display:none}.placeholder{font-size:11px;color:#6b7280;text-align:center;padding:8px}
-    .angle-label{text-align:center;padding:7px 5px;font-size:12px;background:#fff;border-top:1px solid #edf1f5}
-    .quality-dot{display:inline-block;width:9px;height:9px;border-radius:999px;background:#98a2b3;margin-right:6px;vertical-align:middle}
-    .angle-card[data-quality="ok"] .quality-dot{background:var(--ok)} .angle-card[data-quality="warn"] .quality-dot{background:var(--warn)}
-    .tool-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
-    .hint-box{margin-top:12px;padding:12px;border-radius:14px;border:1px solid #d7e4fb;background:#f8fbff}
-    .save-note{margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-    .search-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-    .person-list{border:1px solid var(--line);border-radius:16px;overflow:auto;max-height:60vh;font-size:13px}
-    .person-row{padding:8px 9px;border-bottom:1px solid #edf1f5;display:grid;grid-template-columns:1fr auto;gap:8px;cursor:pointer;background:#fff}.person-row:hover{background:#f8fbff}.person-row.active{background:#eef5ff}
-    .name{font-size:13px;font-weight:500}.mini{font-size:11px;color:var(--muted)}
-    .status-pill{align-self:center;padding:4px 7px;border-radius:999px;font-size:10px;font-weight:500;white-space:nowrap}.st-pending{background:#eef2f6;color:#667281}.st-partial{background:#fff4dd;color:#9a6b08}.st-complete{background:#e8faee;color:#087742}
-    .bottom-panel{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-    .guide-card{padding:12px;border:1px solid var(--line);border-radius:16px;background:#fafbfc}.muted-box{padding:12px;border-radius:14px;border:1px dashed var(--line);background:#fafbfc;color:var(--muted);font-size:13px}
-    ol{margin:8px 0 0 18px;padding:0} li{margin:4px 0;font-size:13px;color:#344054}
-    .toast{position:fixed;right:18px;bottom:18px;padding:12px 14px;border-radius:14px;background:#132238;color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.18);z-index:9999;font-size:14px;opacity:0;transform:translateY(8px);transition:.18s ease;pointer-events:none}
-    .toast.show{opacity:1;transform:translateY(0)}
-    @media (max-width:1260px){.content,.bottom-panel{grid-template-columns:1fr}.person-list{max-height:34vh}}
-    @media (max-width:980px){.app{grid-template-columns:1fr}}
-    @media (max-width:760px){.camera-stage-wrap{grid-template-columns:1fr}.camera-side{flex-direction:row;flex-wrap:wrap}.preview-grid{grid-template-columns:repeat(2,1fr)}.tool-row,.search-row,.form-grid{grid-template-columns:1fr}.icon-actions{justify-content:flex-start}}
+    h1,h2,p{margin:0} h1{font-size:21px;line-height:1.2;font-weight:600} h2{font-size:20px;line-height:1.2;font-weight:600}
+    .sub{font-size:13px;color:var(--muted)} .mini{font-size:11px;color:var(--muted);line-height:1.2} .tiny{font-size:12px;color:var(--muted)} .section-title{font-size:15px;font-weight:600;margin-bottom:8px}
+    input,select,button{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px;background:#fff}
+    input:focus,select:focus,button:focus{outline:2px solid rgba(59,115,204,.18);border-color:var(--primary-2)}
+    button{cursor:pointer;transition:.15s ease;font-weight:400} button:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-2)} .btn-soft{background:#f8fbff}
+    .btn-primary.on{background:#e74c3c}.btn-primary.off{background:#2ecc71}
+    .icon-actions{display:flex;gap:10px;flex-wrap:wrap}.icon-btn{width:82px;height:82px;padding:0;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:#f8fbff}.icon{font-size:27px;line-height:1}.icon-label{font-size:11px;text-align:center;line-height:1.15}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.reset-wrap{margin-top:auto;padding-top:10px;display:flex;justify-content:flex-end}.reset-btn{width:auto;font-size:11px;color:#d14343;background:#fff7f7;border-color:#f1c7c7;opacity:.7}.reset-btn:hover{opacity:1}.muted-box{padding:12px;border-radius:14px;border:1px dashed var(--line);background:#fafbfc;color:var(--muted);font-size:13px}
+    .main{display:grid;grid-template-rows:auto 1fr;gap:14px;min-height:0}.header{padding:14px 16px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:var(--soft);min-width:105px}.stat .n{font-size:22px;font-weight:600}
+    .content{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;align-items:start}.camera-panel,.list-panel{padding:14px}
+    .camera-top{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:12px;margin-bottom:10px}.status{font-weight:600}.status.on{color:#2ecc71}.status.off{color:#e74c3c}
+    .camera-actions{display:grid;grid-template-columns:repeat(4,minmax(110px,1fr));gap:10px;align-items:center}.camera-actions button,.camera-actions select{min-height:48px}
+    .camera-layout{display:grid;grid-template-columns:minmax(0,1fr) 140px;gap:12px;align-items:start}.camera-left{display:flex;flex-direction:column;gap:12px;min-width:0}.camera-right{display:flex;flex-direction:column;gap:12px}
+    .camera-wrap{position:relative;aspect-ratio:2/3;max-width:660px;width:100%;max-height:72vh;border-radius:16px;overflow:hidden;background:#07111d}
+    video{width:100%;height:100%;object-fit:cover;display:block}.overlay{position:absolute;inset:0;pointer-events:none}.guide-box{position:absolute;left:18%;top:8%;width:64%;height:82%;border:3px solid rgba(255,255,255,.92);border-radius:24px;box-shadow:0 0 0 9999px rgba(0,0,0,.16)}.guide-line{position:absolute;left:50%;top:8%;height:82%;border-left:2px dashed rgba(255,255,255,.55);transform:translateX(-50%)}.guide-shoulder,.guide-hip{position:absolute;left:28%;width:44%;border-top:2px dashed rgba(255,255,255,.5)}.guide-shoulder{top:29%}.guide-hip{top:52%}
+    .angle-indicator{position:absolute;left:12px;top:12px;background:rgba(17,24,39,.78);color:#fff;padding:8px 11px;border-radius:12px;font-size:14px;font-weight:600;z-index:5}.compact-note{font-size:12px;color:var(--muted);margin-top:8px}.hint-box{padding:12px;border-radius:14px;border:1px solid #d7e4fb;background:#f8fbff}.control-card{padding:12px;border:1px solid var(--line);border-radius:16px;background:#fbfcfe}
+    .preview-grid{display:grid;grid-template-columns:1fr;gap:10px}.angle-card{border:2px solid #d4dae2;border-radius:16px;background:#fcfdff;overflow:hidden;cursor:pointer;transition:.14s ease}.angle-card.active{border-color:var(--primary);box-shadow:0 0 0 3px rgba(46,95,174,.11)}.angle-card[data-quality="ok"]{border-color:var(--ok)}.angle-card[data-quality="warn"]{border-color:var(--warn)}.angle-card[data-quality="empty"]{border-color:#c8d0da}
+    .angle-thumb{aspect-ratio:2/3;background:linear-gradient(180deg,#edf2f7,#dfe6ee);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}.angle-thumb img{width:100%;height:100%;object-fit:cover;display:none}.placeholder{font-size:11px;color:#6b7280;text-align:center;padding:8px;display:flex;align-items:center;justify-content:center;width:100%;height:100%}.angle-label{text-align:center;padding:7px 5px;font-size:12px;background:#fff;border-top:1px solid #edf1f5}.quality-dot{display:inline-block;width:9px;height:9px;border-radius:999px;background:#98a2b3;margin-right:6px;vertical-align:middle}.angle-card[data-quality="ok"] .quality-dot{background:var(--ok)}.angle-card[data-quality="warn"] .quality-dot{background:var(--warn)}
+    .list-panel{display:flex;flex-direction:column;height:100%}.search-row{display:grid;grid-template-columns:1fr auto;gap:10px}.person-list{border:1px solid var(--line);border-radius:16px;overflow:auto;max-height:70vh;font-size:13px;flex:1}.person-row{padding:8px 10px;border-bottom:1px solid #edf1f5;display:grid;grid-template-columns:1fr auto;gap:8px;cursor:pointer;background:#fff;min-height:58px;align-items:center}.person-row:hover{background:#f8fbff}.person-row.active{background:#eef5ff}.name{font-size:13px;font-weight:500;line-height:1.15}.status-pill{align-self:center;padding:4px 7px;border-radius:999px;font-size:10px;font-weight:500;white-space:nowrap}.st-pending{background:#eef2f6;color:#667281}.st-partial{background:#fff4dd;color:#9a6b08}.st-complete{background:#e8faee;color:#087742}
+    .toast{position:fixed;right:18px;bottom:18px;padding:12px 14px;border-radius:14px;background:#132238;color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.18);z-index:9999;font-size:14px;opacity:0;transform:translateY(8px);transition:.18s ease;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}
+    @media (max-width:1240px){.app{grid-template-columns:280px 1fr}.camera-wrap{max-width:460px}.camera-actions{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:980px){.app{grid-template-columns:1fr}.sidebar{display:none}.main{grid-template-rows:auto 1fr}.stats{display:none}.content{grid-template-columns:1fr}.camera-panel{order:1;padding:12px}.list-panel{order:2;padding:12px}.header{padding:12px 14px}.header .sub{font-size:12px}.person-list{max-height:32vh}.search-row{grid-template-columns:1fr}.camera-top{grid-template-columns:1fr;gap:8px}.camera-layout{grid-template-columns:1fr}.camera-wrap{max-width:100%;width:100%;max-height:none;aspect-ratio:2/3}.preview-grid{grid-template-columns:repeat(4,1fr);gap:8px}}
+    @media (max-width:620px){.app{padding:8px;gap:8px}.panel{border-radius:14px}.header h2{font-size:18px}.camera-actions{grid-template-columns:1fr 1fr}.preview-grid{grid-template-columns:repeat(2,1fr)}.angle-label{font-size:11px}.hint-box{padding:10px}.person-list{max-height:28vh}}
     @media print{body{background:#fff}.app{display:block;padding:0}.panel{border:none;box-shadow:none}}
   </style>
 </head>
 <body>
   <div class="app">
     <aside class="panel sidebar">
-      <div>
-        <h1>ระบบถ่ายภาพกำลังพล ทบ.</h1>
-        <div class="sub">Final version สำหรับใช้งานหน้างาน • เรียบง่าย • ใช้ทั้งคอมและมือถือ</div>
-      </div>
-
+      <div><h1>ระบบถ่ายภาพกำลังพล ทบ.</h1></div>
       <div>
         <div class="section-title">เครื่องมือหลัก</div>
         <div class="icon-actions">
@@ -98,9 +61,7 @@
           <button id="exportBtn" class="icon-btn" title="ส่งออก ZIP"><div class="icon">📦</div><div class="icon-label">ส่งออก<br>ZIP</div></button>
         </div>
         <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" hidden />
-        <div class="tiny" style="margin-top:8px">รองรับคอลัมน์: หมายเลขประจำตัว10หลัก, ยศ, ชื่อ, นามสกุล, สังกัดปฏิบัติงาน</div>
       </div>
-
       <div>
         <div class="section-title">เพิ่มกำลังพล</div>
         <div class="form-grid">
@@ -114,18 +75,14 @@
         <input id="manualOperatingUnit" placeholder="สังกัดปฏิบัติงาน" style="margin-top:10px" />
         <button id="addManualBtn" class="btn-primary" style="margin-top:10px">เพิ่มกำลังพล</button>
       </div>
-
       <div>
         <div class="section-title">เชื่อมต่อเซิร์ฟเวอร์กลาง</div>
         <input id="serverUrlInput" placeholder="เช่น https://192.168.1.249:3000" />
         <button id="connectServerBtn" class="btn-soft" style="margin-top:8px">เชื่อมต่อ</button>
-        <div class="muted-box" style="margin-top:8px">
-          <div><b>สถานะ:</b> <span id="serverStatusText">ยังไม่เชื่อมต่อ</span></div>
-          <div class="tiny" style="margin-top:6px">ใช้เมื่อมีคอมหลัก 1 เครื่องเปิดเซิร์ฟเวอร์ไว้ แล้วให้อุปกรณ์อื่นในวง Wi‑Fi เดียวกันเข้ามาใช้งานและซิงก์ข้อมูลกลับมายังคอมหลัก</div>
-        </div>
+        <div class="muted-box" style="margin-top:8px"><div><b>สถานะ:</b> <span id="serverStatusText">ยังไม่เชื่อมต่อ</span></div></div>
       </div>
+      <div class="reset-wrap"><button id="resetAllBtn" class="reset-btn" title="รีเซ็ตข้อมูลทั้งหมด">รีเซ็ตข้อมูล</button></div>
     </aside>
-
     <main class="main">
       <section class="panel header">
         <div>
@@ -139,19 +96,27 @@
           <div class="stat"><div class="mini">ยังไม่ถ่าย</div><div class="n" id="statPending">0</div></div>
         </div>
       </section>
-
       <section class="content">
         <section class="panel camera-panel">
           <div class="camera-top">
-            <div class="badge" id="cameraStatus">กล้องยังไม่เปิด</div>
-            <div class="badge" id="autoStatus">Auto Capture: ปิด</div>
+            <div id="cameraStatus" class="status off">● กล้องปิด</div>
+            <div class="camera-actions">
+              <button id="toggleCameraBtn" class="btn-primary off">เปิดกล้อง</button>
+              <button id="captureBtn" class="btn-soft">บันทึกภาพ</button>
+              <button id="retakeBtn" class="btn-soft">ลบภาพ</button>
+              <select id="angleSelect">
+                <option value="front">ด้านหน้า</option>
+                <option value="back">ด้านหลัง</option>
+                <option value="left">ด้านข้างซ้าย</option>
+                <option value="right">ด้านข้างขวา</option>
+              </select>
+            </div>
           </div>
-
-          <div class="camera-stage-wrap">
-            <div>
+          <div class="camera-layout">
+            <div class="camera-left">
               <div class="camera-wrap">
-                <div class="angle-indicator" id="currentAngleLabel">กำลังถ่าย: ด้านหน้า</div>
-                <video id="video" playsinline autoplay muted></video>
+                <div id="currentAngleLabel" class="angle-indicator">กำลังถ่าย: ด้านหน้า</div>
+                <video id="video" autoplay playsinline muted></video>
                 <canvas id="captureCanvas" style="display:none"></canvas>
                 <canvas id="overlayCanvas" class="overlay"></canvas>
                 <div class="overlay">
@@ -161,355 +126,91 @@
                   <div class="guide-hip"></div>
                 </div>
               </div>
-              <div class="preview-grid">
-                <div class="angle-card active" data-angle="front" data-quality="empty"><div class="angle-thumb"><img id="img-front"><div class="placeholder" id="ph-front">ยังไม่ถ่าย</div></div><div class="angle-label"><span class="quality-dot"></span>ด้านหน้า</div></div>
-                <div class="angle-card" data-angle="back" data-quality="empty"><div class="angle-thumb"><img id="img-back"><div class="placeholder" id="ph-back">ยังไม่ถ่าย</div></div><div class="angle-label"><span class="quality-dot"></span>ด้านหลัง</div></div>
-                <div class="angle-card" data-angle="left" data-quality="empty"><div class="angle-thumb"><img id="img-left"><div class="placeholder" id="ph-left">ยังไม่ถ่าย</div></div><div class="angle-label"><span class="quality-dot"></span>ด้านข้างซ้าย</div></div>
-                <div class="angle-card" data-angle="right" data-quality="empty"><div class="angle-thumb"><img id="img-right"><div class="placeholder" id="ph-right">ยังไม่ถ่าย</div></div><div class="angle-label"><span class="quality-dot"></span>ด้านข้างขวา</div></div>
+              <div class="compact-note">ยืนเต็มตัว ศีรษะถึงปลายเท้า</div>
+              <div class="hint-box" style="margin-top:8px"><div class="section-title" style="margin-bottom:4px">สถานะการจัดท่า</div><div id="poseHint" class="tiny">รอเปิดกล้อง</div></div>
+            </div>
+            <div class="camera-right">
+              <div class="control-card">
+                <div class="section-title">ภาพตัวอย่าง 4 มุม</div>
+                <div class="preview-grid">
+                  <div class="angle-card active" data-angle="front" data-quality="empty"><div class="angle-thumb"><img id="img-front"><div class="placeholder" id="ph-front">ด้านหน้า</div></div><div class="angle-label"><span class="quality-dot"></span>ด้านหน้า</div></div>
+                  <div class="angle-card" data-angle="back" data-quality="empty"><div class="angle-thumb"><img id="img-back"><div class="placeholder" id="ph-back">ด้านหลัง</div></div><div class="angle-label"><span class="quality-dot"></span>ด้านหลัง</div></div>
+                  <div class="angle-card" data-angle="left" data-quality="empty"><div class="angle-thumb"><img id="img-left"><div class="placeholder" id="ph-left">ด้านข้างซ้าย</div></div><div class="angle-label"><span class="quality-dot"></span>ด้านข้างซ้าย</div></div>
+                  <div class="angle-card" data-angle="right" data-quality="empty"><div class="angle-thumb"><img id="img-right"><div class="placeholder" id="ph-right">ด้านข้างขวา</div></div><div class="angle-label"><span class="quality-dot"></span>ด้านข้างขวา</div></div>
+                </div>
               </div>
-            </div>
-            <div class="camera-side">
-              <button id="startCameraBtn" class="btn-primary">เปิดกล้อง</button>
-              <button id="stopCameraBtn" class="btn-danger">ปิดกล้อง</button>
-              <button id="captureBtn" class="btn-soft">บันทึกภาพ</button>
-              <button id="retakeBtn" class="btn-soft">ลบภาพมุมนี้</button>
-            </div>
-          </div>
-
-          <div class="tool-row">
-            <select id="angleSelect">
-              <option value="front">ด้านหน้า</option>
-              <option value="back">ด้านหลัง</option>
-              <option value="left">ด้านข้างซ้าย</option>
-              <option value="right">ด้านข้างขวา</option>
-            </select>
-            <button id="toggleAutoBtn" class="btn-soft">เปิด Auto Capture</button>
-            <button id="saveSyncBtn" class="btn-ok">บันทึก/ซิงก์เดี๋ยวนี้</button>
-          </div>
-
-          <div class="hint-box">
-            <div class="section-title" style="margin-bottom:4px">สถานะการจัดท่า</div>
-            <div id="poseHint" class="tiny">รอเปิดกล้อง</div>
-            <div class="save-note">
-              <div class="tiny">คำแนะนำ: กดบันทึก/ซิงก์ทุกครั้งหลังถ่ายครบหรือก่อนเปลี่ยนจุดใช้งาน</div>
-              <div class="tiny"><b>สำรองข้อมูล:</b> export ZIP ระหว่างวัน + คัดลอกโฟลเดอร์ data หลังจบงาน</div>
             </div>
           </div>
         </section>
-
         <section class="panel list-panel">
           <div class="section-title">รายชื่อกำลังพล</div>
           <div class="search-row">
-            <input id="listSearchInput" placeholder="ค้นหาชื่อ / นามสกุล / หมายเลขประจำตัว" />
-            <select id="filterOperatingUnit"><option value="">ทุกสังกัดปฏิบัติงาน</option></select>
+            <input id="listSearchInput" placeholder="ค้นหา ชื่อ / นามสกุล">
             <select id="filterStatus">
               <option value="">ทุกสถานะ</option>
               <option value="pending">ยังไม่ถ่าย</option>
               <option value="partial">ถ่ายไม่ครบ</option>
               <option value="complete">ครบ 4 มุม</option>
             </select>
+            <select id="filterOperatingUnit" style="display:none"><option value="">ทุกสังกัดปฏิบัติงาน</option></select>
           </div>
           <div id="personList" class="person-list"></div>
-          <div class="tiny">รองรับการค้นหาจากชื่อ นามสกุล หรือหมายเลขประจำตัว 10 หลัก โดยไม่ต้องเลื่อนหาทั้งรายการ</div>
         </section>
-      </section>
-
-      <section class="panel bottom-panel">
-        <div class="guide-card">
-          <div class="section-title">4) โหมดเชื่อมต่อเซิร์ฟเวอร์กลาง</div>
-          <ol>
-            <li>ใช้เมื่อมีคอมหลัก 1 เครื่องเปิดเซิร์ฟเวอร์ไว้ในห้อง</li>
-            <li>อุปกรณ์อื่นในวง Wi‑Fi เดียวกันกรอก URL ของคอมหลัก แล้วกด <b>เชื่อมต่อ</b></li>
-            <li>ความสำคัญ: ทำให้ข้อมูลรายชื่อ รูปภาพ และสถานะซิงก์กลับไปที่คอมหลัก ลดความเสี่ยงข้อมูลหายที่เครื่องถ่าย</li>
-            <li>ถ้าเปิดจากคอมหลักเองที่ URL เดียวกัน ระบบจะเชื่อมต่ออัตโนมัติเมื่อมี Socket.IO</li>
-          </ol>
-        </div>
-        <div class="guide-card">
-          <div class="section-title">5) การเปิดกล้อง</div>
-          <ol>
-            <li>เปิดเว็บผ่าน <b>HTTPS</b> หรือ <b>localhost</b> เพื่อให้เบราว์เซอร์อนุญาตใช้กล้อง</li>
-            <li>กด <b>เปิดกล้อง</b> แล้วอนุญาตสิทธิ์กล้องครั้งแรก</li>
-            <li>กด <b>ปิดกล้อง</b> ได้ทุกเมื่อ เพื่อความมั่นใจและประหยัดทรัพยากร</li>
-            <li>ความสำคัญ: ช่วยให้เจ้าหน้าที่ควบคุม workflow ชัดเจน ไม่เปิดกล้องค้างโดยไม่จำเป็น</li>
-          </ol>
-        </div>
-        <div class="guide-card">
-          <div class="section-title">6) แผนสำรองเล็ก ๆ</div>
-          <ol>
-            <li>ระหว่างวันให้กด <b>ส่งออก ZIP</b> เป็นระยะ</li>
-            <li>หลังพักหรือหลังจบงาน ให้คัดลอกโฟลเดอร์ <b>data</b> ไปเก็บอีกที่หนึ่ง</li>
-            <li>ถ้ามีมือถือหรือคอมสำรอง 1 เครื่อง จะช่วยลดความเสี่ยงหน้างานได้มาก</li>
-            <li>ก่อนเริ่มงานจริง ให้ทดลองพิมพ์ A4 1 แผ่น และทดสอบถ่ายจริง 1 คน</li>
-          </ol>
-        </div>
       </section>
     </main>
   </div>
   <div id="toast" class="toast"></div>
-
   <script>
   (() => {
-    const STORAGE_KEY = 'tattoo_registry_final_v1';
-    const state = {
-      personnel: [], selectedId: null, currentAngle: 'front', stream: null,
-      poseLandmarker: null, poseReady: false, autoCapture: false, autoHoldStart: null,
-      lastAutoShotAt: 0, lastPoseInfo: null, socket: null, serverConnected: false,
-      suppressBroadcast: false, bypassIncompleteWarningOnce: false
-    };
-    const angleMeta = { front: 'ด้านหน้า', back: 'ด้านหลัง', left: 'ด้านข้างซ้าย', right: 'ด้านข้างขวา' };
-    const $ = id => document.getElementById(id);
-    const els = {
-      excelFile: $('excelFile'), importIconBtn: $('importIconBtn'), printFormBtn: $('printFormBtn'), exportBtn: $('exportBtn'),
-      manualId: $('manualId'), manualRank: $('manualRank'), manualFirstName: $('manualFirstName'), manualLastName: $('manualLastName'), manualOperatingUnit: $('manualOperatingUnit'), addManualBtn: $('addManualBtn'),
-      serverUrlInput: $('serverUrlInput'), connectServerBtn: $('connectServerBtn'), serverStatusText: $('serverStatusText'),
-      selectedPersonName: $('selectedPersonName'), selectedPersonMeta: $('selectedPersonMeta'),
-      statTotal: $('statTotal'), statComplete: $('statComplete'), statPartial: $('statPartial'), statPending: $('statPending'),
-      cameraStatus: $('cameraStatus'), autoStatus: $('autoStatus'), currentAngleLabel: $('currentAngleLabel'),
-      video: $('video'), captureCanvas: $('captureCanvas'), overlayCanvas: $('overlayCanvas'),
-      startCameraBtn: $('startCameraBtn'), stopCameraBtn: $('stopCameraBtn'), captureBtn: $('captureBtn'), retakeBtn: $('retakeBtn'), toggleAutoBtn: $('toggleAutoBtn'), saveSyncBtn: $('saveSyncBtn'), angleSelect: $('angleSelect'), poseHint: $('poseHint'),
-      personList: $('personList'), listSearchInput: $('listSearchInput'), filterOperatingUnit: $('filterOperatingUnit'), filterStatus: $('filterStatus'), toast: $('toast'),
-      imgs: { front: $('img-front'), back: $('img-back'), left: $('img-left'), right: $('img-right') },
-      placeholders: { front: $('ph-front'), back: $('ph-back'), left: $('ph-left'), right: $('ph-right') }
-    };
-
-    function uid(){ return Math.random().toString(36).slice(2,10); }
-    function fullName(p){ return [p.rank || '', p.firstName || '', p.lastName || ''].join(' ').replace(/\s+/g,' ').trim(); }
-    function saveLocal(){ localStorage.setItem(STORAGE_KEY, JSON.stringify({ personnel: state.personnel, selectedId: state.selectedId })); }
-    function loadLocal(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(!raw) return false; const parsed = JSON.parse(raw); if(Array.isArray(parsed.personnel)){ state.personnel = parsed.personnel; state.selectedId = parsed.selectedId || parsed.personnel[0]?.localId || null; return true; } }catch(_){} return false; }
-    function showToast(msg, type='info'){
-      els.toast.textContent = msg;
-      els.toast.style.background = type === 'ok' ? '#0f7140' : type === 'warn' ? '#a16207' : '#132238';
-      els.toast.classList.add('show');
-      clearTimeout(showToast._t); showToast._t = setTimeout(()=> els.toast.classList.remove('show'), 2200);
-    }
-    function statusOf(person){ const c = ['front','back','left','right'].filter(k => !!person.photos?.[k]?.dataUrl).length; return c===0?'pending':c===4?'complete':'partial'; }
-    function statusText(s){ return s==='complete'?'ครบ 4 มุม':s==='partial'?'ถ่ายไม่ครบ':'ยังไม่ถ่าย'; }
-    function qualityText(q){ return q==='ok'?'ผ่าน':q==='warn'?'ควรถ่ายใหม่':'ยังไม่ถ่าย'; }
-    function getSelectedPerson(){ return state.personnel.find(p => p.localId === state.selectedId) || null; }
-    function isSelectedComplete(){ const p=getSelectedPerson(); return !p || statusOf(p)==='complete'; }
-    function escapeHtml(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-    function dataURLToBlob(dataURL){ const arr=dataURL.split(','); const mime=arr[0].match(/:(.*?);/)[1]; const bstr=atob(arr[1]); let n=bstr.length; const u8arr=new Uint8Array(n); while(n--) u8arr[n]=bstr.charCodeAt(n); return new Blob([u8arr], {type:mime}); }
-    function parseNameFields(row){
-      const first = String(row['ชื่อ'] ?? row['name'] ?? '').trim();
-      const last = String(row['นามสกุล'] ?? row['lastname'] ?? row['surname'] ?? '').trim();
-      const combined = String(row['ชื่อ-สกุล'] ?? row['full name'] ?? '').trim();
-      if(first || last) return { firstName:first, lastName:last };
-      if(combined){ const parts = combined.split(/\s+/); return { firstName: parts.shift() || '', lastName: parts.join(' ') || '' }; }
-      return { firstName:'', lastName:'' };
-    }
-    function normalizeRecord(row){
-      const map={}; Object.keys(row).forEach(k => map[String(k).trim().toLowerCase()]=row[k]);
-      const id = String(map['หมายเลขประจำตัว10หลัก'] ?? map['หมายเลขประจำตัว 10 หลัก'] ?? map['เลขประจำตัว10หลัก'] ?? map['เลขประจำตัว 10 หลัก'] ?? map['เลขประจำตัว'] ?? map['id'] ?? '').replace(/\D/g,'').slice(0,10);
-      const rank = String(map['ยศ'] ?? map['rank'] ?? '').trim();
-      const nameFields = parseNameFields({
-        'ชื่อ': map['ชื่อ'], 'นามสกุล': map['นามสกุล'], 'ชื่อ-สกุล': map['ชื่อ-สกุล'] ?? map['ชื่อสกุล']
-      });
-      const operatingUnit = String(map['สังกัดปฏิบัติงาน'] ?? map['operating unit'] ?? map['unit'] ?? map['ส่วนงาน'] ?? map['ฝ่าย'] ?? map['ฝ่าย/แผนก'] ?? '').trim();
-      if(!id && !nameFields.firstName && !nameFields.lastName) return null;
-      return { localId: uid(), id, rank, firstName: nameFields.firstName, lastName: nameFields.lastName, operatingUnit, note:'', photos:{ front:null, back:null, left:null, right:null }, createdAt:new Date().toISOString() };
-    }
-    function updateStats(){
-      const total=state.personnel.length; let complete=0, partial=0, pending=0;
-      state.personnel.forEach(p => { const s=statusOf(p); if(s==='complete') complete++; else if(s==='partial') partial++; else pending++; });
-      els.statTotal.textContent = total; els.statComplete.textContent = complete; els.statPartial.textContent = partial; els.statPending.textContent = pending;
-    }
-    function fillOperatingUnitFilter(){
-      const current=els.filterOperatingUnit.value; const units=[...new Set(state.personnel.map(p=>p.operatingUnit).filter(Boolean))].sort();
-      els.filterOperatingUnit.innerHTML = '<option value="">ทุกสังกัดปฏิบัติงาน</option>' + units.map(u => `<option>${escapeHtml(u)}</option>`).join('');
-      els.filterOperatingUnit.value = units.includes(current) ? current : '';
-    }
-    function setCurrentAngle(angle){
-      state.currentAngle = angle; els.angleSelect.value = angle; els.currentAngleLabel.textContent = 'กำลังถ่าย: ' + angleMeta[angle];
-      document.querySelectorAll('.angle-card').forEach(card => card.classList.toggle('active', card.dataset.angle === angle));
-    }
-    function renderSelected(){
-      const p=getSelectedPerson();
-      if(!p){ els.selectedPersonName.textContent='ยังไม่ได้เลือกกำลังพล'; els.selectedPersonMeta.textContent='เลือกจากรายการด้านขวาหรือค้นหาจากชื่อ/นามสกุล/หมายเลขประจำตัว'; }
-      else { els.selectedPersonName.textContent = fullName(p) || p.id; els.selectedPersonMeta.textContent = `หมายเลขประจำตัว ${p.id||'-'} • ${p.operatingUnit||'-'}`; }
-      ['front','back','left','right'].forEach(k => {
-        const photo = p?.photos?.[k]; const card=document.querySelector(`.angle-card[data-angle="${k}"]`);
-        if(photo?.dataUrl){ els.imgs[k].src=photo.dataUrl; els.imgs[k].style.display='block'; els.placeholders[k].style.display='none'; card.dataset.quality = photo.quality || 'warn'; }
-        else { els.imgs[k].src=''; els.imgs[k].style.display='none'; els.placeholders[k].style.display='block'; card.dataset.quality='empty'; }
-      });
-    }
-    function filteredPersonnel(){
-      const q = els.listSearchInput.value.trim().toLowerCase(); const u = els.filterOperatingUnit.value; const s = els.filterStatus.value;
-      return state.personnel.filter(p => {
-        const hay = [p.id, p.rank, p.firstName, p.lastName, fullName(p), p.operatingUnit].join(' ').toLowerCase();
-        const okQ = !q || hay.includes(q); const okU = !u || p.operatingUnit === u; const okS = !s || statusOf(p) === s; return okQ && okU && okS;
-      });
-    }
-    function selectPerson(localId){
-      if(state.selectedId === localId) return;
-      const current = getSelectedPerson();
-      if(current && statusOf(current) !== 'complete' && !state.bypassIncompleteWarningOnce){
-        const ok = confirm(`กำลังพล ${fullName(current)} ยังถ่ายไม่ครบ 4 มุม ต้องการเปลี่ยนคนต่อหรือไม่?`);
-        if(!ok) return;
-      }
-      state.bypassIncompleteWarningOnce = false;
-      state.selectedId = localId; renderAll(); broadcastState('select-person');
-    }
-    function renderList(){
-      const rows = filteredPersonnel();
-      els.personList.innerHTML = rows.map(p => {
-        const s=statusOf(p); return `<div class="person-row ${p.localId===state.selectedId?'active':''}" data-id="${p.localId}"><div><div class="name">${escapeHtml(fullName(p)||p.id||'(ไม่ระบุชื่อ)')}</div><div class="mini">${escapeHtml(p.id||'-')} • ${escapeHtml(p.operatingUnit||'-')}</div></div><div class="status-pill st-${s}">${statusText(s)}</div></div>`;
-      }).join('') || '<div style="padding:14px;color:#667085">ไม่พบข้อมูล</div>';
-      [...els.personList.querySelectorAll('.person-row')].forEach(row => row.addEventListener('click', ()=> selectPerson(row.dataset.id)));
-    }
-    function renderAll(){ updateStats(); fillOperatingUnitFilter(); renderList(); renderSelected(); setCurrentAngle(state.currentAngle); saveLocal(); }
-    function resizeOverlay(){ const rect = els.video.getBoundingClientRect(); els.overlayCanvas.width = rect.width || 1; els.overlayCanvas.height = rect.height || 1; }
-    async function setupPoseIfPossible(){
-      if(state.poseReady || !window.MPTasks) return;
-      try{
-        const vision = await window.MPTasks.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
-        state.poseLandmarker = await window.MPTasks.PoseLandmarker.createFromOptions(vision,{ baseOptions:{ modelAssetPath:'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task' }, runningMode:'VIDEO', numPoses:1 });
-        state.poseReady = true; els.poseHint.textContent = 'AI ตรวจจับท่าทางพร้อมใช้งาน';
-      }catch(err){ console.warn(err); els.poseHint.textContent = 'เปิดกล้องได้ แต่ AI ตรวจจับท่าทางยังไม่พร้อม ระบบยังถ่ายแบบกดมือได้'; }
-    }
-    function drawOverlayStatus(info){ const c=els.overlayCanvas, ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); if(!info) return; ctx.font='600 15px Kanit'; ctx.fillStyle = info.ok ? 'rgba(19,128,74,.95)' : 'rgba(183,121,31,.95)'; ctx.fillRect(14,14,285,36); ctx.fillStyle='#fff'; ctx.fillText(info.message,24,37); }
-    function analyzePose(landmarks,w,h,angle){
-      const ls=landmarks[11], rs=landmarks[12], lh=landmarks[23], rh=landmarks[24], nose=landmarks[0], la=landmarks[27], ra=landmarks[28];
-      if(!(ls&&rs&&lh&&rh&&nose)) return { ok:false, message:'ไม่พบท่าทาง', quality:'warn' };
-      const cx=((ls.x+rs.x+lh.x+rh.x)/4)*w; const shoulderY=((ls.y+rs.y)/2)*h; const hipY=((lh.y+rh.y)/2)*h; const ankleY=(((la?.y??0.96)+(ra?.y??0.96))/2)*h;
-      const shoulderDelta=Math.abs(ls.y-rs.y)*h; const hipDelta=Math.abs(lh.y-rh.y)*h; const bodyWidth=Math.abs(ls.x-rs.x);
-      const inBoxX = cx > w*0.33 && cx < w*0.67; const inBoxY = shoulderY > h*0.16 && ankleY < h*0.96 && hipY < h*0.66; const straight = shoulderDelta < 24 && hipDelta < 22;
-      const sideProfileLikely = bodyWidth < 0.13; const okOrientation = (angle==='left'||angle==='right') ? sideProfileLikely : bodyWidth > 0.16; const ok = inBoxX && inBoxY && straight && okOrientation;
-      let message = ok ? `ตำแหน่ง${angleMeta[angle]}พร้อมถ่าย` : 'ขยับให้อยู่ในกรอบ';
-      if(!inBoxX) message='ขยับเข้ากึ่งกลาง'; else if(!inBoxY) message='ถอยหรือยืนให้เห็นเต็มตัว'; else if((angle==='left'||angle==='right') && !sideProfileLikely) message='หันด้านข้างให้ชัดขึ้น'; else if((angle==='front'||angle==='back') && bodyWidth <= 0.16) message='หันหน้า/หลังให้ตรงกล้อง'; else if(!straight) message='ยืนตัวตรงและไหล่เสมอ';
-      return { ok, message, quality: ok ? 'ok' : 'warn' };
-    }
-    async function detectLoop(){
-      if(!state.stream || !els.video.videoWidth){ requestAnimationFrame(detectLoop); return; }
-      resizeOverlay();
-      if(state.poseReady && state.poseLandmarker){
-        const res = state.poseLandmarker.detectForVideo(els.video, performance.now());
-        const pose = res.landmarks?.[0]; const info = pose ? analyzePose(pose, els.overlayCanvas.width, els.overlayCanvas.height, state.currentAngle) : { ok:false, message:'ไม่พบท่าทาง', quality:'warn' };
-        state.lastPoseInfo = info; drawOverlayStatus(info); els.poseHint.textContent = info.message + (state.autoCapture ? ' • โหมดอัตโนมัติเปิดอยู่' : ''); maybeAutoCapture(info.ok);
-      } else {
-        els.poseHint.textContent = 'ยังไม่พร้อมใช้ AI ตรวจท่าทาง แต่กดถ่ายเองได้';
-      }
-      requestAnimationFrame(detectLoop);
-    }
-    async function startCamera(){
-      try{
-        if(!navigator.mediaDevices?.getUserMedia) throw new Error('ไม่รองรับกล้อง');
-        stopCameraTracks();
-        let stream;
-        try{ stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ ideal:'environment' }, width:{ ideal:1280 }, height:{ ideal:1920 } }, audio:false }); }
-        catch(_){ stream = await navigator.mediaDevices.getUserMedia({ video:{ width:{ ideal:1280 }, height:{ ideal:1920 } }, audio:false }); }
-        state.stream = stream; els.video.srcObject = stream; await els.video.play().catch(()=>{}); resizeOverlay(); setupPoseIfPossible(); requestAnimationFrame(detectLoop);
-        els.cameraStatus.textContent = 'กล้องพร้อมใช้งาน'; els.cameraStatus.className = 'badge ok'; showToast('เปิดกล้องสำเร็จ', 'ok');
-      }catch(err){ els.cameraStatus.textContent = 'เปิดกล้องไม่สำเร็จ'; els.cameraStatus.className = 'badge danger'; els.poseHint.textContent = 'กรุณาเปิดผ่าน HTTPS หรือ localhost และอนุญาตสิทธิ์กล้อง'; showToast('เปิดกล้องไม่สำเร็จ', 'warn'); console.error(err); }
-    }
-    function stopCameraTracks(){ if(state.stream){ state.stream.getTracks().forEach(t=>t.stop()); state.stream = null; } if(els.video.srcObject) els.video.srcObject = null; }
-    function stopCamera(){ stopCameraTracks(); els.cameraStatus.textContent = 'กล้องปิดอยู่'; els.cameraStatus.className = 'badge'; els.poseHint.textContent = 'กล้องถูกปิดแล้ว'; const ctx=els.overlayCanvas.getContext('2d'); ctx.clearRect(0,0,els.overlayCanvas.width,els.overlayCanvas.height); showToast('ปิดกล้องแล้ว'); }
-    function maybeAutoCapture(ok){
-      if(!state.autoCapture || !getSelectedPerson()) return; const now=Date.now();
-      if(ok){ if(!state.autoHoldStart) state.autoHoldStart = now; const held=now-state.autoHoldStart; const waitMs=1600; const left=Math.max(0,Math.ceil((waitMs-held)/1000));
-        if(held < waitMs) els.poseHint.textContent = `อยู่ในตำแหน่งแล้ว • จะถ่ายใน ${left} วินาที`; else if(now - state.lastAutoShotAt > 2800){ state.lastAutoShotAt=now; captureCurrentAngle(true); }
-      } else state.autoHoldStart=null;
-    }
-    function captureCurrentAngle(auto=false){
-      const p=getSelectedPerson(); if(!p) return alert('กรุณาเลือกกำลังพลก่อนถ่ายภาพ'); if(!els.video.videoWidth) return alert('ยังไม่มีกล้องหรือภาพจากกล้อง');
-      const angle=state.currentAngle, canvas=els.captureCanvas; canvas.width=els.video.videoWidth; canvas.height=els.video.videoHeight; const ctx=canvas.getContext('2d'); ctx.drawImage(els.video,0,0,canvas.width,canvas.height);
-      const dataUrl=canvas.toDataURL('image/jpeg',1.0); const poseInfo=state.lastPoseInfo || { ok:false, quality:'warn', message:'ไม่มีข้อมูลท่าทาง' };
-      p.photos[angle] = { dataUrl, capturedAt:new Date().toISOString(), angle, width:canvas.width, height:canvas.height, quality:poseInfo.ok?'ok':'warn', qualityMessage:poseInfo.message, autoCaptured:auto };
-      renderAll(); broadcastState(auto ? 'auto-capture' : 'capture'); showToast(auto ? `ถ่ายอัตโนมัติสำเร็จ (${angleMeta[angle]})` : `บันทึกภาพ${angleMeta[angle]}แล้ว`, 'ok');
-    }
-    function retakeCurrentAngle(){ const p=getSelectedPerson(); if(!p) return alert('กรุณาเลือกกำลังพลก่อน'); p.photos[state.currentAngle] = null; renderAll(); broadcastState('retake'); showToast(`ลบภาพ${angleMeta[state.currentAngle]}แล้ว`); }
-    async function handleExcel(file){
-      const buf=await file.arrayBuffer(); const wb=XLSX.read(buf,{type:'array'}); const ws=wb.Sheets[wb.SheetNames[0]]; const rows=XLSX.utils.sheet_to_json(ws,{defval:''}); const mapped=rows.map(normalizeRecord).filter(Boolean);
-      if(!mapped.length) return alert('ไม่พบข้อมูลที่อ่านได้จากไฟล์นี้');
-      const existing = new Map(state.personnel.map(p => [p.id || p.localId, p]));
-      mapped.forEach(p => { const key=p.id||p.localId; if(existing.has(key)){ const old=existing.get(key); existing.set(key, { ...old, ...p, localId: old.localId, photos: old.photos || p.photos }); } else existing.set(key,p); });
-      state.personnel = [...existing.values()]; if(!state.selectedId && state.personnel[0]) state.selectedId = state.personnel[0].localId; renderAll(); broadcastState('import-excel'); showToast(`นำเข้ารายชื่อสำเร็จ ${mapped.length} รายการ`, 'ok');
-    }
-    function addManual(){
-      const id=els.manualId.value.replace(/\D/g,'').slice(0,10), rank=els.manualRank.value.trim(), firstName=els.manualFirstName.value.trim(), lastName=els.manualLastName.value.trim(), operatingUnit=els.manualOperatingUnit.value.trim();
-      if(!id || id.length!==10) return alert('กรุณากรอกหมายเลขประจำตัว 10 หลัก'); if(!firstName || !lastName) return alert('กรุณากรอกชื่อและนามสกุล'); if(state.personnel.some(p => p.id===id)) return alert('หมายเลขประจำตัวนี้มีอยู่แล้ว');
-      const person={ localId:uid(), id, rank, firstName, lastName, operatingUnit, note:'', photos:{front:null,back:null,left:null,right:null}, createdAt:new Date().toISOString() };
-      state.personnel.unshift(person); state.selectedId = person.localId; els.manualId.value=''; els.manualFirstName.value=''; els.manualLastName.value=''; els.manualOperatingUnit.value=''; renderAll(); broadcastState('add-manual'); showToast('เพิ่มกำลังพลสำเร็จ', 'ok');
-    }
-    async function exportAll(){
-      if(!state.personnel.length) return alert('ยังไม่มีข้อมูลสำหรับส่งออก');
-      const zip=new JSZip(); const imgFolder=zip.folder('images'); const rows=[];
-      for(const p of state.personnel){ const s=statusOf(p); rows.push({ 'หมายเลขประจำตัว10หลัก':p.id, 'ยศ':p.rank, 'ชื่อ':p.firstName, 'นามสกุล':p.lastName, 'สังกัดปฏิบัติงาน':p.operatingUnit, 'สถานะ':statusText(s), 'คุณภาพด้านหน้า':qualityText(p.photos.front?.quality||'empty'), 'คุณภาพด้านหลัง':qualityText(p.photos.back?.quality||'empty'), 'คุณภาพด้านข้างซ้าย':qualityText(p.photos.left?.quality||'empty'), 'คุณภาพด้านข้างขวา':qualityText(p.photos.right?.quality||'empty'), 'ด้านหน้า':p.photos.front ? `images/${p.id}_front.jpg` : '', 'ด้านหลัง':p.photos.back ? `images/${p.id}_back.jpg` : '', 'ด้านข้างซ้าย':p.photos.left ? `images/${p.id}_left.jpg` : '', 'ด้านข้างขวา':p.photos.right ? `images/${p.id}_right.jpg` : '' });
-        for(const angle of ['front','back','left','right']) if(p.photos[angle]?.dataUrl) imgFolder.file(`${p.id}_${angle}.jpg`, dataURLToBlob(p.photos[angle].dataUrl)); }
-      const wb=XLSX.utils.book_new(); const ws=XLSX.utils.json_to_sheet(rows); XLSX.utils.book_append_sheet(wb,ws,'รายงาน'); const wbArray=XLSX.write(wb,{bookType:'xlsx',type:'array'}); zip.file('report.xlsx', wbArray);
-      const content=await zip.generateAsync({type:'blob'}); saveAs(content, `tattoo_registry_export_${new Date().toISOString().slice(0,10)}.zip`); showToast('ส่งออก ZIP สำเร็จ', 'ok');
-    }
-    function printCurrentForm(){
-      const p=getSelectedPerson(); if(!p) return alert('กรุณาเลือกกำลังพลก่อนพิมพ์');
-      const win=window.open('', '_blank');
-      const imgCell = angle => { const photo=p.photos[angle]; return `<div class="cell"><div class="title">${angleMeta[angle]}</div><div class="frame">${photo?.dataUrl ? `<img src="${photo.dataUrl}" />` : '<div class="empty">ยังไม่มีภาพ</div>'}</div><div class="q">สถานะ: ${qualityText(photo?.quality||'empty')}</div></div>`; };
-      win.document.write(`<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><title>แบบฟอร์มภาพกำลังพล</title><style>
-        body{font-family:Sarabun,Arial,sans-serif;margin:0;color:#111} .page{width:210mm;min-height:297mm;padding:10mm 10mm 12mm 10mm;box-sizing:border-box}
-        .head{text-align:center;border:1px solid #333;padding:8px 10px;margin-bottom:10px}.head h1{font-size:22px;margin:0 0 4px}.head .sub{font-size:12px}
-        .meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.box{border:1px solid #333;padding:6px 8px;font-size:13px;min-height:32px}
-        .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.cell{border:1px solid #333;padding:6px}.title{font-weight:600;text-align:center;margin-bottom:4px}.frame{height:86mm;border:1px solid #666;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fafafa}.frame img{width:100%;height:100%;object-fit:cover}.empty{color:#777;font-size:12px}.q{font-size:11px;margin-top:4px}
-        .extra{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.linebox{border:1px solid #333;padding:6px 8px;font-size:12px;min-height:44px}
-        .sign{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:14px}.sign-box{padding-top:18px;font-size:13px;text-align:center}.line{border-bottom:1px solid #333;height:28px;margin-bottom:6px}
-        .footer{margin-top:10px;border:1px solid #333;padding:6px 8px;font-size:11px}.note{font-size:11px;color:#333}.mt{margin-top:8px}@page{size:A4;margin:8mm} @media print{.page{padding:0;width:auto;min-height:auto}}
-      </style></head><body><div class="page">
-        <div class="head"><h1>แบบฟอร์มบันทึกภาพกำลังพล</h1><div class="sub">แบบฟอร์มนี้ออกแบบให้แก้ไขเพิ่มเติมได้ในอนาคต โดยคงโครงรูป 4 มุมและช่องตรวจ/ลงนามไว้</div></div>
-        <div class="meta">
-          <div class="box"><b>ชื่อ-สกุล:</b> ${escapeHtml(fullName(p))}</div>
-          <div class="box"><b>หมายเลขประจำตัว 10 หลัก:</b> ${escapeHtml(p.id||'-')}</div>
-          <div class="box"><b>สังกัดปฏิบัติงาน:</b> ${escapeHtml(p.operatingUnit||'-')}</div>
-          <div class="box"><b>วันที่พิมพ์:</b> ${new Date().toLocaleString('th-TH')}</div>
-        </div>
-        <div class="grid">${imgCell('front')}${imgCell('back')}${imgCell('left')}${imgCell('right')}</div>
-        <div class="extra">
-          <div class="linebox"><b>ผลการตรวจ/หมายเหตุ:</b><br><br></div>
-          <div class="linebox"><b>รายการตรวจเพิ่มเติมในอนาคต:</b><br><br></div>
-        </div>
-        <div class="sign">
-          <div class="sign-box"><div class="line"></div>ลายมือชื่อกำลังพล</div>
-          <div class="sign-box"><div class="line"></div>ลายมือชื่อเจ้าหน้าที่ผู้บันทึก</div>
-          <div class="sign-box"><div class="line"></div>ลายมือชื่อผู้ตรวจ</div>
-        </div>
-        <div class="footer"><div class="note">หมายเหตุ: หากในระบบมีสถานะภาพสีส้ม แนะนำให้ถ่ายใหม่ก่อนลงนามรับรอง</div></div>
-      </div><script>window.onload=()=>window.print();<\/script></body></html>`);
-      win.document.close();
-    }
-    function connectServer(url){
-      const target=(url||'').trim() || location.origin; if(!/^https?:\/\//.test(target)) return alert('กรุณาใส่ URL ให้ครบ เช่น https://192.168.1.249:3000');
-      const ensure=()=>{ const socket=window.io(target,{transports:['websocket','polling']}); state.socket=socket; els.serverStatusText.textContent='กำลังเชื่อมต่อ...';
-        socket.on('connect', ()=>{ state.serverConnected=true; els.serverStatusText.textContent=`เชื่อมต่อแล้ว: ${target}`; socket.emit('requestState'); showToast('เชื่อมต่อเซิร์ฟเวอร์สำเร็จ', 'ok'); });
-        socket.on('disconnect', ()=>{ state.serverConnected=false; els.serverStatusText.textContent='ขาดการเชื่อมต่อ'; showToast('ขาดการเชื่อมต่อเซิร์ฟเวอร์', 'warn'); });
-        socket.on('stateSnapshot', payload=>{ if(!payload||!Array.isArray(payload.personnel)) return; state.suppressBroadcast=true; state.personnel=payload.personnel; state.selectedId=payload.selectedId || payload.personnel[0]?.localId || state.selectedId; renderAll(); state.suppressBroadcast=false; });
-        socket.on('stateUpdated', payload=>{ if(!payload||!Array.isArray(payload.personnel)) return; state.suppressBroadcast=true; state.personnel=payload.personnel; state.selectedId=payload.selectedId || state.selectedId; renderAll(); state.suppressBroadcast=false; });
-      };
-      if(window.io) return ensure(); const s=document.createElement('script'); s.src=`${target.replace(/\/$/,'')}/socket.io/socket.io.js`; s.onload=ensure; s.onerror=()=>alert('โหลด Socket.IO จากเซิร์ฟเวอร์ไม่สำเร็จ'); document.head.appendChild(s);
-    }
-    function autoConnectIfHosted(){ if(location.protocol.startsWith('http') && location.hostname && location.port==='3000'){ els.serverUrlInput.value = location.origin; connectServer(location.origin); } }
-    function broadcastState(reason='update'){ saveLocal(); if(state.socket && state.serverConnected && !state.suppressBroadcast){ state.socket.emit('replaceState',{ personnel: state.personnel, selectedId: state.selectedId, reason, updatedAt:new Date().toISOString() }); } }
-
-    els.excelFile.addEventListener('change', e=>{ const file=e.target.files?.[0]; if(file) handleExcel(file); e.target.value=''; });
-    els.importIconBtn.addEventListener('click', ()=>els.excelFile.click());
-    els.exportBtn.addEventListener('click', exportAll);
-    els.printFormBtn.addEventListener('click', printCurrentForm);
-    els.addManualBtn.addEventListener('click', addManual);
-    els.connectServerBtn.addEventListener('click', ()=>connectServer(els.serverUrlInput.value));
-    els.listSearchInput.addEventListener('input', renderList);
-    els.filterOperatingUnit.addEventListener('change', renderList);
-    els.filterStatus.addEventListener('change', renderList);
-    els.startCameraBtn.addEventListener('click', startCamera);
-    els.stopCameraBtn.addEventListener('click', stopCamera);
-    els.captureBtn.addEventListener('click', ()=>captureCurrentAngle(false));
-    els.retakeBtn.addEventListener('click', retakeCurrentAngle);
-    els.saveSyncBtn.addEventListener('click', ()=>{ broadcastState('manual-sync'); showToast('บันทึก/ซิงก์สำเร็จ', 'ok'); });
-    els.angleSelect.addEventListener('change', e=>setCurrentAngle(e.target.value));
-    els.toggleAutoBtn.addEventListener('click', ()=>{ state.autoCapture=!state.autoCapture; state.autoHoldStart=null; els.toggleAutoBtn.textContent = state.autoCapture ? 'ปิด Auto Capture' : 'เปิด Auto Capture'; els.autoStatus.textContent = `Auto Capture: ${state.autoCapture ? 'เปิด' : 'ปิด'}`; els.autoStatus.className = `badge ${state.autoCapture ? 'ok' : ''}`; showToast(state.autoCapture ? 'เปิด Auto Capture แล้ว' : 'ปิด Auto Capture แล้ว'); });
-    document.querySelectorAll('.angle-card').forEach(card => card.addEventListener('click', ()=> setCurrentAngle(card.dataset.angle)));
-    window.addEventListener('resize', resizeOverlay);
-    window.addEventListener('mediapipe-ready', setupPoseIfPossible);
-
-    if(!loadLocal()){
-      state.personnel = [];
-      state.selectedId = null;
-    }
-    renderAll(); autoConnectIfHosted();
+    const STORAGE_KEY='tattoo_registry_final_v1';
+    const state={personnel:[],selectedId:null,currentAngle:'front',stream:null,poseLandmarker:null,poseReady:false,autoCapture:false,autoHoldStart:null,lastAutoShotAt:0,lastPoseInfo:null,socket:null,serverConnected:false,suppressBroadcast:false,bypassIncompleteWarningOnce:false};
+    const angleMeta={front:'ด้านหน้า',back:'ด้านหลัง',left:'ด้านข้างซ้าย',right:'ด้านข้างขวา'};
+    const $=id=>document.getElementById(id);
+    const els={excelFile:$('excelFile'),importIconBtn:$('importIconBtn'),printFormBtn:$('printFormBtn'),exportBtn:$('exportBtn'),manualId:$('manualId'),manualRank:$('manualRank'),manualFirstName:$('manualFirstName'),manualLastName:$('manualLastName'),manualOperatingUnit:$('manualOperatingUnit'),addManualBtn:$('addManualBtn'),serverUrlInput:$('serverUrlInput'),connectServerBtn:$('connectServerBtn'),serverStatusText:$('serverStatusText'),resetAllBtn:$('resetAllBtn'),selectedPersonName:$('selectedPersonName'),selectedPersonMeta:$('selectedPersonMeta'),statTotal:$('statTotal'),statComplete:$('statComplete'),statPartial:$('statPartial'),statPending:$('statPending'),cameraStatus:$('cameraStatus'),currentAngleLabel:$('currentAngleLabel'),poseHint:$('poseHint'),video:$('video'),captureCanvas:$('captureCanvas'),overlayCanvas:$('overlayCanvas'),toggleCameraBtn:$('toggleCameraBtn'),captureBtn:$('captureBtn'),retakeBtn:$('retakeBtn'),angleSelect:$('angleSelect'),personList:$('personList'),listSearchInput:$('listSearchInput'),filterOperatingUnit:$('filterOperatingUnit'),filterStatus:$('filterStatus'),toast:$('toast'),imgs:{front:$('img-front'),back:$('img-back'),left:$('img-left'),right:$('img-right')},placeholders:{front:$('ph-front'),back:$('ph-back'),left:$('ph-left'),right:$('ph-right')}};
+    const uid=()=>Math.random().toString(36).slice(2,10);
+    const fullName=p=>[p.rank||'',p.firstName||'',p.lastName||''].join(' ').replace(/\s+/g,' ').trim();
+    function saveLocal(){localStorage.setItem(STORAGE_KEY,JSON.stringify({personnel:state.personnel,selectedId:state.selectedId}))}
+    function loadLocal(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return false;const parsed=JSON.parse(raw);if(Array.isArray(parsed.personnel)){state.personnel=parsed.personnel;state.selectedId=parsed.selectedId||parsed.personnel[0]?.localId||null;return true}}catch(_){ }return false}
+    function showToast(msg,type='info'){els.toast.textContent=msg;els.toast.style.background=type==='ok'?'#0f7140':type==='warn'?'#a16207':'#132238';els.toast.classList.add('show');clearTimeout(showToast._t);showToast._t=setTimeout(()=>els.toast.classList.remove('show'),2200)}
+    const statusOf=person=>{const c=['front','back','left','right'].filter(k=>!!person.photos?.[k]?.dataUrl).length;return c===0?'pending':c===4?'complete':'partial'};
+    const statusText=s=>s==='complete'?'ครบ 4 มุม':s==='partial'?'ถ่ายไม่ครบ':'ยังไม่ถ่าย';
+    const qualityText=q=>q==='ok'?'ผ่าน':q==='warn'?'ควรถ่ายใหม่':'ยังไม่ถ่าย';
+    const getSelectedPerson=()=>state.personnel.find(p=>p.localId===state.selectedId)||null;
+    const escapeHtml=str=>String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    function dataURLToBlob(dataURL){const arr=dataURL.split(',');const mime=arr[0].match(/:(.*?);/)[1];const bstr=atob(arr[1]);let n=bstr.length;const u8arr=new Uint8Array(n);while(n--)u8arr[n]=bstr.charCodeAt(n);return new Blob([u8arr],{type:mime})}
+    function parseNameFields(row){const first=String(row['ชื่อ']??row['name']??'').trim();const last=String(row['นามสกุล']??row['lastname']??row['surname']??'').trim();const combined=String(row['ชื่อ-สกุล']??row['full name']??'').trim();if(first||last)return{firstName:first,lastName:last};if(combined){const parts=combined.split(/\s+/);return{firstName:parts.shift()||'',lastName:parts.join(' ')||''}}return{firstName:'',lastName:''}}
+    function normalizeRecord(row){const map={};Object.keys(row).forEach(k=>map[String(k).trim().toLowerCase()]=row[k]);const id=String(map['หมายเลขประจำตัว10หลัก']??map['หมายเลขประจำตัว 10 หลัก']??map['เลขประจำตัว10หลัก']??map['เลขประจำตัว 10 หลัก']??map['เลขประจำตัว']??map['id']??'').replace(/\D/g,'').slice(0,10);const rank=String(map['ยศ']??map['rank']??'').trim();const nameFields=parseNameFields({'ชื่อ':map['ชื่อ'],'นามสกุล':map['นามสกุล'],'ชื่อ-สกุล':map['ชื่อ-สกุล']??map['ชื่อสกุล']});const operatingUnit=String(map['สังกัดปฏิบัติงาน']??map['operating unit']??map['unit']??map['ส่วนงาน']??map['ฝ่าย']??map['ฝ่าย/แผนก']??'').trim();const position=String(map['ตำแหน่ง']??map['position']??'').trim();if(!id&&!nameFields.firstName&&!nameFields.lastName)return null;return{localId:uid(),id,rank,firstName:nameFields.firstName,lastName:nameFields.lastName,operatingUnit,position,note:'',photos:{front:null,back:null,left:null,right:null},createdAt:new Date().toISOString()}}
+    function updateStats(){const total=state.personnel.length;let complete=0,partial=0,pending=0;state.personnel.forEach(p=>{const s=statusOf(p);if(s==='complete')complete++;else if(s==='partial')partial++;else pending++});els.statTotal.textContent=total;els.statComplete.textContent=complete;els.statPartial.textContent=partial;els.statPending.textContent=pending}
+    function fillOperatingUnitFilter(){const current=els.filterOperatingUnit.value;const units=[...new Set(state.personnel.map(p=>p.operatingUnit).filter(Boolean))].sort();els.filterOperatingUnit.innerHTML='<option value="">ทุกสังกัดปฏิบัติงาน</option>'+units.map(u=>`<option>${escapeHtml(u)}</option>`).join('');els.filterOperatingUnit.value=units.includes(current)?current:''}
+    function setCurrentAngle(angle){state.currentAngle=angle;els.angleSelect.value=angle;els.currentAngleLabel.textContent='กำลังถ่าย: '+angleMeta[angle];document.querySelectorAll('.angle-card').forEach(card=>card.classList.toggle('active',card.dataset.angle===angle))}
+    function renderSelected(){const p=getSelectedPerson();if(!p){els.selectedPersonName.textContent='ยังไม่ได้เลือกกำลังพล';els.selectedPersonMeta.textContent='เลือกจากรายการด้านขวาหรือค้นหาจากชื่อ/นามสกุล/หมายเลขประจำตัว'}else{els.selectedPersonName.textContent=fullName(p)||p.id;els.selectedPersonMeta.textContent=`หมายเลขประจำตัว ${p.id||'-'} • ${p.operatingUnit||'-'}`}['front','back','left','right'].forEach(k=>{const photo=p?.photos?.[k];const card=document.querySelector(`.angle-card[data-angle="${k}"]`);if(photo?.dataUrl){els.imgs[k].src=photo.dataUrl;els.imgs[k].style.display='block';els.placeholders[k].style.display='none';if(card)card.dataset.quality=photo.quality||'warn'}else{els.imgs[k].src='';els.imgs[k].style.display='none';els.placeholders[k].style.display='flex';if(card)card.dataset.quality='empty'}})}
+    function filteredPersonnel(){const q=(els.listSearchInput?.value||'').trim().toLowerCase();const u=els.filterOperatingUnit?.value||'';const s=els.filterStatus?.value||'';return state.personnel.filter(p=>{const hay=[p.id,p.rank,p.firstName,p.lastName,fullName(p),p.operatingUnit].join(' ').toLowerCase();const okQ=!q||hay.includes(q);const okU=!u||p.operatingUnit===u;const okS=!s||statusOf(p)===s;return okQ&&okU&&okS})}
+    function selectPerson(localId){if(state.selectedId===localId)return;const current=getSelectedPerson();if(current&&statusOf(current)!=='complete'&&!state.bypassIncompleteWarningOnce){const ok=confirm(`กำลังพล ${fullName(current)} ยังถ่ายไม่ครบ 4 มุม ต้องการเปลี่ยนคนต่อหรือไม่?`);if(!ok)return}state.bypassIncompleteWarningOnce=false;state.selectedId=localId;renderAll();broadcastState('select-person')}
+    function renderList(){const rows=filteredPersonnel();els.personList.innerHTML=rows.map(p=>{const s=statusOf(p);const statusLabel=s==='complete'?'ถ่ายแล้ว':s==='partial'?'ถ่ายไม่ครบ':'ยังไม่ถ่าย';return `<div class="person-row ${p.localId===state.selectedId?'active':''}" data-id="${p.localId}"><div><div class="name">${escapeHtml(fullName(p)||p.id||'(ไม่ระบุชื่อ)')}</div></div><div class="status-pill st-${s}">${statusLabel}</div></div>`}).join('')||'<div style="padding:14px;color:#667085">ไม่พบข้อมูล</div>';[...els.personList.querySelectorAll('.person-row')].forEach(row=>row.addEventListener('click',()=>selectPerson(row.dataset.id)))}
+    function updateCameraUI(){const btn=els.toggleCameraBtn;const status=els.cameraStatus;if(!btn||!status)return;if(state.stream){btn.textContent='ปิดกล้อง';btn.classList.add('on');btn.classList.remove('off');status.textContent='● กล้องเปิด';status.classList.add('on');status.classList.remove('off')}else{btn.textContent='เปิดกล้อง';btn.classList.add('off');btn.classList.remove('on');status.textContent='● กล้องปิด';status.classList.add('off');status.classList.remove('on')}}
+    function renderAll(){updateStats();fillOperatingUnitFilter();renderList();renderSelected();setCurrentAngle(state.currentAngle);updateCameraUI();saveLocal()}
+    function resizeOverlay(){const rect=els.video.getBoundingClientRect();els.overlayCanvas.width=rect.width||1;els.overlayCanvas.height=rect.height||1}
+    async function setupPoseIfPossible(){if(state.poseReady||!window.MPTasks)return;try{const vision=await window.MPTasks.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');state.poseLandmarker=await window.MPTasks.PoseLandmarker.createFromOptions(vision,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task'},runningMode:'VIDEO',numPoses:1});state.poseReady=true;els.poseHint.textContent='AI ตรวจจับท่าทางพร้อมใช้งาน'}catch(err){console.warn(err);els.poseHint.textContent='เปิดกล้องได้ แต่ AI ตรวจจับท่าทางยังไม่พร้อม ระบบยังถ่ายแบบกดมือได้'}}
+    function drawOverlayStatus(info){const c=els.overlayCanvas,ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);if(!info)return;ctx.font='600 15px Sarabun';ctx.fillStyle=info.ok?'rgba(19,128,74,.95)':'rgba(183,121,31,.95)';ctx.fillRect(14,14,285,36);ctx.fillStyle='#fff';ctx.fillText(info.message,24,37)}
+    function analyzePose(landmarks,w,h,angle){const ls=landmarks[11],rs=landmarks[12],lh=landmarks[23],rh=landmarks[24],nose=landmarks[0],la=landmarks[27],ra=landmarks[28];if(!(ls&&rs&&lh&&rh&&nose))return{ok:false,message:'ไม่พบท่าทาง',quality:'warn'};const cx=((ls.x+rs.x+lh.x+rh.x)/4)*w;const shoulderY=((ls.y+rs.y)/2)*h;const hipY=((lh.y+rh.y)/2)*h;const ankleY=(((la?.y??0.96)+(ra?.y??0.96))/2)*h;const shoulderDelta=Math.abs(ls.y-rs.y)*h;const hipDelta=Math.abs(lh.y-rh.y)*h;const bodyWidth=Math.abs(ls.x-rs.x);const inBoxX=cx>w*0.33&&cx<w*0.67;const inBoxY=shoulderY>h*0.16&&ankleY<h*0.96&&hipY<h*0.66;const straight=shoulderDelta<24&&hipDelta<22;const sideProfileLikely=bodyWidth<0.13;const okOrientation=(angle==='left'||angle==='right')?sideProfileLikely:bodyWidth>0.16;const ok=inBoxX&&inBoxY&&straight&&okOrientation;let message=ok?`ตำแหน่ง${angleMeta[angle]}พร้อมถ่าย`:'ขยับให้อยู่ในกรอบ';if(!inBoxX)message='ขยับเข้ากึ่งกลาง';else if(!inBoxY)message='ถอยหรือยืนให้เห็นเต็มตัว';else if((angle==='left'||angle==='right')&&!sideProfileLikely)message='หันด้านข้างให้ชัดขึ้น';else if((angle==='front'||angle==='back')&&bodyWidth<=0.16)message='หันหน้า/หลังให้ตรงกล้อง';else if(!straight)message='ยืนตัวตรงและไหล่เสมอ';return{ok,message,quality:ok?'ok':'warn'}}
+    function maybeAutoCapture(ok){if(!state.autoCapture||!getSelectedPerson())return;const now=Date.now();if(ok){if(!state.autoHoldStart)state.autoHoldStart=now;const held=now-state.autoHoldStart;const waitMs=1600;const left=Math.max(0,Math.ceil((waitMs-held)/1000));if(held<waitMs){els.poseHint.textContent=`อยู่ในตำแหน่งแล้ว • จะถ่ายใน ${left} วินาที`}else if(now-state.lastAutoShotAt>2800){state.lastAutoShotAt=now;captureCurrentAngle(true)}}else state.autoHoldStart=null}
+    function detectLoop(){if(!state.stream||!els.video.videoWidth){requestAnimationFrame(detectLoop);return}resizeOverlay();if(state.poseReady&&state.poseLandmarker){const res=state.poseLandmarker.detectForVideo(els.video,performance.now());const pose=res.landmarks?.[0];const info=pose?analyzePose(pose,els.overlayCanvas.width,els.overlayCanvas.height,state.currentAngle):{ok:false,message:'ไม่พบท่าทาง',quality:'warn'};state.lastPoseInfo=info;drawOverlayStatus(info);els.poseHint.textContent=info.message;maybeAutoCapture(info.ok)}else{els.poseHint.textContent='ยังไม่พร้อมใช้ AI ตรวจท่าทาง แต่กดถ่ายเองได้'}requestAnimationFrame(detectLoop)}
+    async function startCamera(){try{const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});state.stream=stream;els.video.srcObject=stream;await els.video.play();await setupPoseIfPossible();resizeOverlay();requestAnimationFrame(detectLoop);updateCameraUI();showToast('เปิดกล้องสำเร็จ','ok')}catch(e){console.error(e);state.stream=null;els.video.srcObject=null;updateCameraUI();alert('เปิดกล้องไม่สำเร็จ')}}
+    function stopCamera(){if(state.stream){state.stream.getTracks().forEach(t=>t.stop());state.stream=null}els.video.srcObject=null;if(els.overlayCanvas){const ctx=els.overlayCanvas.getContext('2d');ctx.clearRect(0,0,els.overlayCanvas.width,els.overlayCanvas.height)}updateCameraUI()}
+    const toggleCamera=()=>state.stream?stopCamera():startCamera();
+    function captureCurrentAngle(auto=false){const p=getSelectedPerson();if(!p)return alert('กรุณาเลือกกำลังพลก่อนถ่ายภาพ');if(!els.video.videoWidth)return alert('ยังไม่มีกล้องหรือภาพจากกล้อง');const angle=state.currentAngle;const canvas=els.captureCanvas;const ctx=canvas.getContext('2d');const vw=els.video.videoWidth;const vh=els.video.videoHeight;const targetRatio=2/3;let cropWidth=vw;let cropHeight=cropWidth/targetRatio;if(cropHeight>vh){cropHeight=vh;cropWidth=cropHeight*targetRatio}const sx=(vw-cropWidth)/2;const sy=(vh-cropHeight)/2;canvas.width=1000;canvas.height=1500;ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(els.video,sx,sy,cropWidth,cropHeight,0,0,canvas.width,canvas.height);const dataUrl=canvas.toDataURL('image/jpeg',1.0);const poseInfo=state.lastPoseInfo||{ok:false,quality:'warn',message:'ไม่มีข้อมูลท่าทาง'};p.photos[angle]={dataUrl,capturedAt:new Date().toISOString(),angle,width:canvas.width,height:canvas.height,quality:poseInfo.ok?'ok':'warn',qualityMessage:poseInfo.message,autoCaptured:auto};renderAll();broadcastState(auto?'auto-capture':'capture');showToast(auto?`ถ่ายอัตโนมัติสำเร็จ (${angleMeta[angle]})`:`บันทึกภาพ${angleMeta[angle]}แล้ว`,'ok')}
+    function retakeCurrentAngle(){const p=getSelectedPerson();if(!p)return alert('กรุณาเลือกกำลังพลก่อน');p.photos[state.currentAngle]=null;renderAll();broadcastState('retake');showToast(`ลบภาพ${angleMeta[state.currentAngle]}แล้ว`)}
+    async function handleExcel(file){const buf=await file.arrayBuffer();const wb=XLSX.read(buf,{type:'array'});const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{defval:''});const mapped=rows.map(normalizeRecord).filter(Boolean);if(!mapped.length)return alert('ไม่พบข้อมูลที่อ่านได้จากไฟล์นี้');const existing=new Map(state.personnel.map(p=>[p.id||p.localId,p]));mapped.forEach(p=>{const key=p.id||p.localId;if(existing.has(key)){const old=existing.get(key);existing.set(key,{...old,...p,localId:old.localId,photos:old.photos||p.photos})}else existing.set(key,p)});state.personnel=[...existing.values()];if(!state.selectedId&&state.personnel[0])state.selectedId=state.personnel[0].localId;renderAll();broadcastState('import-excel');showToast(`นำเข้ารายชื่อสำเร็จ ${mapped.length} รายการ`,'ok')}
+    function resetAllData(){if(!confirm('ลบข้อมูลทั้งหมดและเริ่มใหม่?'))return;state.personnel=[];state.selectedId=null;localStorage.removeItem(STORAGE_KEY);if(state.socket&&state.serverConnected){state.socket.emit('replaceState',{personnel:[],selectedId:null,reason:'reset-all',updatedAt:new Date().toISOString()})}renderAll();showToast('รีเซ็ตข้อมูลแล้ว','warn')}
+    function addManual(){const id=els.manualId.value.replace(/\D/g,'').slice(0,10),rank=els.manualRank.value.trim(),firstName=els.manualFirstName.value.trim(),lastName=els.manualLastName.value.trim(),operatingUnit=els.manualOperatingUnit.value.trim();if(!id||id.length!==10)return alert('กรุณากรอกหมายเลขประจำตัว 10 หลัก');if(!firstName||!lastName)return alert('กรุณากรอกชื่อและนามสกุล');if(state.personnel.some(p=>p.id===id))return alert('หมายเลขประจำตัวนี้มีอยู่แล้ว');const person={localId:uid(),id,rank,firstName,lastName,operatingUnit,position:'',note:'',photos:{front:null,back:null,left:null,right:null},createdAt:new Date().toISOString()};state.personnel.unshift(person);state.selectedId=person.localId;els.manualId.value='';els.manualFirstName.value='';els.manualLastName.value='';els.manualOperatingUnit.value='';renderAll();broadcastState('add-manual');showToast('เพิ่มกำลังพลสำเร็จ','ok')}
+    async function exportAll(){if(!state.personnel.length)return alert('ยังไม่มีข้อมูลสำหรับส่งออก');const zip=new JSZip();const imgFolder=zip.folder('images');const rows=[];for(const p of state.personnel){const s=statusOf(p);rows.push({'หมายเลขประจำตัว10หลัก':p.id,'ยศ':p.rank,'ชื่อ':p.firstName,'นามสกุล':p.lastName,'สังกัดปฏิบัติงาน':p.operatingUnit,'ตำแหน่ง':p.position||'','สถานะ':statusText(s),'คุณภาพด้านหน้า':qualityText(p.photos.front?.quality||'empty'),'คุณภาพด้านหลัง':qualityText(p.photos.back?.quality||'empty'),'คุณภาพด้านข้างซ้าย':qualityText(p.photos.left?.quality||'empty'),'คุณภาพด้านข้างขวา':qualityText(p.photos.right?.quality||'empty'),'ด้านหน้า':p.photos.front?`images/${p.id}_front.jpg`:'','ด้านหลัง':p.photos.back?`images/${p.id}_back.jpg`:'','ด้านข้างซ้าย':p.photos.left?`images/${p.id}_left.jpg`:'','ด้านข้างขวา':p.photos.right?`images/${p.id}_right.jpg`:''});for(const angle of ['front','back','left','right']){if(p.photos[angle]?.dataUrl){imgFolder.file(`${p.id}_${angle}.jpg`,dataURLToBlob(p.photos[angle].dataUrl))}}}const wb=XLSX.utils.book_new();const ws=XLSX.utils.json_to_sheet(rows);XLSX.utils.book_append_sheet(wb,ws,'รายงาน');const wbArray=XLSX.write(wb,{bookType:'xlsx',type:'array'});zip.file('report.xlsx',wbArray);const content=await zip.generateAsync({type:'blob'});saveAs(content,`tattoo_registry_export_${new Date().toISOString().slice(0,10)}.zip`);showToast('ส่งออก ZIP สำเร็จ','ok')}
+    function printCurrentForm(){const p=getSelectedPerson();if(!p)return alert('กรุณาเลือกกำลังพลก่อนพิมพ์');const now=new Date();const thaiMonths=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];const monthYear=`${thaiMonths[now.getMonth()]} ${(now.getFullYear()+543).toString().slice(-2)}`;const photoCell=angle=>{const photo=p.photos[angle];return `<div class="cell">${photo?.dataUrl?`<img src="${photo.dataUrl}" />`:''}</div>`};const win=window.open('','_blank');win.document.write(`<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><title>แบบฟอร์มบันทึกภาพการตรวจสอบการสักลาย</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet"><style>body{font-family:'Sarabun',Arial,sans-serif;margin:0;color:#111;background:#fff}.page{width:210mm;min-height:297mm;padding:8mm;box-sizing:border-box}.title{text-align:center;font-size:15px;line-height:1.35;margin-top:1mm}.unit{text-align:center;font-size:15px;line-height:1.35;margin-bottom:4mm}.grid{display:grid;grid-template-columns:1fr 1fr;gap:6mm}.cell{aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fff}.cell img{width:100%;height:100%;object-fit:cover}.bottom{margin-top:4mm;text-align:center}.check{font-size:14px;line-height:1.5;position:relative;left:0mm}.sign{font-size:14px;line-height:1.6;position:relative;left:6mm}.namegroup{display:inline-block;position:relative;left:24mm;text-align:left}.name{font-size:14px;line-height:1.7}.position{font-size:14px;line-height:1.7;text-align:center}.date{font-size:14px;line-height:1.7;text-align:center;position:relative;left:6mm}@page{size:A4;margin:6mm}</style></head><body><div class="page"><div class="title">บันทึกภาพการตรวจสอบการสักลายตามร่างกายบริเวณนอกร่มผ้า</div><div class="unit">สังกัด ${escapeHtml(p.operatingUnit||'')}</div><div class="grid">${photoCell('front')}${photoCell('back')}${photoCell('left')}${photoCell('right')}</div><div class="bottom"><div class="check">ตรวจถูกต้อง</div><div class="sign">${escapeHtml(p.rank||'')}</div><div class="namegroup"><div class="name">(${escapeHtml(`${p.firstName||''}  ${p.lastName||''}`.trim())})</div><div class="position">${escapeHtml(p.position||'')}</div><div class="date">${monthYear}</div></div></div></div><script>window.onload=()=>window.print();<\/script></body></html>`);win.document.close()}
+    function connectServer(url){const target=(url||'').trim()||location.origin;if(!/^https?:\/\//.test(target))return alert('กรุณาใส่ URL ให้ครบ เช่น https://192.168.1.249:3000');const ensure=()=>{const socket=window.io(target,{transports:['websocket','polling']});state.socket=socket;els.serverStatusText.textContent='กำลังเชื่อมต่อ...';socket.on('connect',()=>{state.serverConnected=true;els.serverStatusText.textContent=`เชื่อมต่อแล้ว: ${target}`;socket.emit('requestState');showToast('เชื่อมต่อเซิร์ฟเวอร์สำเร็จ','ok')});socket.on('disconnect',()=>{state.serverConnected=false;els.serverStatusText.textContent='ขาดการเชื่อมต่อ';showToast('ขาดการเชื่อมต่อเซิร์ฟเวอร์','warn')});socket.on('stateSnapshot',payload=>{if(!payload||!Array.isArray(payload.personnel))return;state.suppressBroadcast=true;state.personnel=payload.personnel;state.selectedId=payload.selectedId||payload.personnel[0]?.localId||state.selectedId;renderAll();state.suppressBroadcast=false});socket.on('stateUpdated',payload=>{if(!payload||!Array.isArray(payload.personnel))return;state.suppressBroadcast=true;state.personnel=payload.personnel;state.selectedId=payload.selectedId||state.selectedId;renderAll();state.suppressBroadcast=false})};if(window.io)return ensure();const s=document.createElement('script');s.src=`${target.replace(/\/$/,'')}/socket.io/socket.io.js`;s.onload=ensure;s.onerror=()=>alert('โหลด Socket.IO จากเซิร์ฟเวอร์ไม่สำเร็จ');document.head.appendChild(s)}
+    function broadcastState(reason='update'){saveLocal();if(state.socket&&state.serverConnected&&!state.suppressBroadcast){state.socket.emit('replaceState',{personnel:state.personnel,selectedId:state.selectedId,reason,updatedAt:new Date().toISOString()})}}
+    if(els.excelFile){els.excelFile.addEventListener('change',e=>{const file=e.target.files?.[0];if(file)handleExcel(file);e.target.value=''})}
+    if(els.importIconBtn)els.importIconBtn.addEventListener('click',()=>els.excelFile?.click()); if(els.exportBtn)els.exportBtn.addEventListener('click',exportAll); if(els.printFormBtn)els.printFormBtn.addEventListener('click',printCurrentForm); if(els.addManualBtn)els.addManualBtn.addEventListener('click',addManual); if(els.connectServerBtn)els.connectServerBtn.addEventListener('click',()=>connectServer(els.serverUrlInput.value)); if(els.resetAllBtn)els.resetAllBtn.addEventListener('click',resetAllData); if(els.listSearchInput)els.listSearchInput.addEventListener('input',renderList); if(els.filterOperatingUnit)els.filterOperatingUnit.addEventListener('change',renderList); if(els.filterStatus)els.filterStatus.addEventListener('change',renderList); if(els.toggleCameraBtn)els.toggleCameraBtn.addEventListener('click',toggleCamera); if(els.captureBtn)els.captureBtn.addEventListener('click',()=>captureCurrentAngle(false)); if(els.retakeBtn)els.retakeBtn.addEventListener('click',retakeCurrentAngle); if(els.angleSelect)els.angleSelect.addEventListener('change',e=>setCurrentAngle(e.target.value));
+    document.querySelectorAll('.angle-card').forEach(card=>card.addEventListener('click',()=>setCurrentAngle(card.dataset.angle))); window.addEventListener('resize',resizeOverlay); window.addEventListener('mediapipe-ready',setupPoseIfPossible);
+    if(!loadLocal()){state.personnel=[];state.selectedId=null} renderAll();
   })();
   </script>
 </body>

@@ -1,3 +1,10 @@
 *.pem
 *-key.pem
+*.xlsx
+*.docx
+*.rar
+data/store.json
+data/*.json
+data/*.jpg
+data/*.png
 node_modules/

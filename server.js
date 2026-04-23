@@ -6,8 +6,8 @@ const { Server } = require('socket.io');
 
 const PORT = process.env.PORT || 3000;
 const HOST = '0.0.0.0';
-const CERT_PATH = process.env.CERT_PATH || 'D:/VSC/tattoo_registry_server/192.168.1.249.pem';
-const KEY_PATH = process.env.KEY_PATH || 'D:/VSC/tattoo_registry_server/192.168.1.249-key.pem';
+const CERT_PATH = process.env.CERT_PATH || 'C:/Users/thx_l/OneDrive/VSC/tattoo_registry_server/192.168.1.93.pem';
+const KEY_PATH = process.env.KEY_PATH || 'C:/Users/thx_l/OneDrive/VSC/tattoo_registry_server/192.168.1.93-key.pem';
 
 const app = express();
 const options = {
